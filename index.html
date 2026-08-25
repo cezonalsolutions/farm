@@ -1,0 +1,2470 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cezonal Staff Login</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+<style>
+:root{
+  --nav:#063765;
+  --blue:#0d6fab;
+  --blue2:#0a5d91;
+  --bg:#f6f8fb;
+  --card:#fff;
+  --line:#e5eaf0;
+  --text:#1e2b3c;
+  --muted:#758396;
+  --green:#168257;
+  --red:#bd4651;
+  --amber:#a87112;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);background:var(--bg)}
+button,select,input{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+
+/* LOGIN */
+.login-page{min-height:100dvh;width:100%;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(380px,.85fr);background:#fff}
+.login-card{display:contents}
+.top-visual{min-height:100dvh;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(circle at 52% 35%,rgba(255,255,255,.16),transparent 26%),radial-gradient(circle at 82% 82%,rgba(127,196,241,.16),transparent 30%),linear-gradient(145deg,#063765 0%,#0a5b98 100%)}
+.visual-glow{position:absolute;width:min(52vw,520px);aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08)}
+.visual-icon{width:140px;height:140px;border-radius:34px;display:grid;place-items:center;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);box-shadow:0 24px 60px rgba(0,0,0,.16);position:relative;z-index:2}
+.visual-icon i{font-size:58px;color:#fff;transform:rotate(-10deg)}
+.visual-dots span{position:absolute;border-radius:50%;background:rgba(255,255,255,.38)}
+.visual-dots span:nth-child(1){left:15%;top:22%;width:8px;height:8px}
+.visual-dots span:nth-child(2){right:17%;top:30%;width:6px;height:6px}
+.visual-dots span:nth-child(3){left:26%;bottom:20%;width:5px;height:5px}
+.visual-dots span:nth-child(4){right:24%;bottom:24%;width:7px;height:7px}
+.login-content{min-height:100dvh;display:flex;flex-direction:column;justify-content:center;padding:60px clamp(32px,6vw,92px);background:radial-gradient(circle at 100% 0%,rgba(22,126,196,.06),transparent 32%),#fff}
+.login-title{font-size:30px;font-weight:850;letter-spacing:-.025em;margin-bottom:28px}
+#loginForm{width:min(420px,100%)}
+.field{margin-bottom:16px}.field label{display:block;margin-bottom:7px;color:#64758a;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.input{height:50px;border:1px solid var(--line);border-radius:10px;display:flex;align-items:center;background:#fff;transition:.15s}
+.input:focus-within{border-color:#8fbddc;box-shadow:0 0 0 3px rgba(14,111,184,.07)}
+.input>i{width:44px;text-align:center;color:#8391a1;font-size:13px}
+.input input,.input select{width:100%;height:100%;border:0;outline:0;background:transparent;color:var(--text);padding:0 8px 0 0;font:inherit;font-size:13px}
+.input select{appearance:none;cursor:pointer}
+.eye{border:0;background:transparent;width:44px;height:100%;color:#8b98a8}
+.login-btn{width:100%;height:50px;border:0;border-radius:10px;background:linear-gradient(90deg,var(--blue2),var(--blue));color:#fff;font-size:12px;font-weight:800;margin-top:6px;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(11,79,135,.18)}
+.login-btn:disabled{opacity:.7}
+.ios-login-spinner{width:19px;height:19px;border:2px solid rgba(255,255,255,.32);border-top-color:#fff;border-radius:50%;animation:spin .72s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.message{display:none;width:100%;margin-top:9px;padding:9px 10px;border-radius:7px;font-size:10px;line-height:1.45}.message.show{display:block}.message.error{background:#fff4f5;border:1px solid #efcfd4;color:#b23d49}.message.success{background:#edf8f3;border:1px solid #cfe7da;color:#15764e}
+
+/* APP */
+.app{min-height:100dvh;background:var(--bg);padding-bottom:76px}
+.app-top{height:66px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 18px;position:sticky;top:0;z-index:20}
+.app-brand{display:flex;align-items:center;gap:10px}.app-brand>i{width:34px;height:34px;border-radius:10px;background:#edf5fb;color:#0a669e;display:grid;place-items:center}.app-brand b{display:block;font-size:12px}.app-brand small{display:block;color:var(--muted);font-size:9px;margin-top:2px}
+.profile-btn{border:0;background:transparent;display:flex;align-items:center;gap:8px;padding:4px}.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#eaf2f8;color:#0b5e94;font-size:11px;font-weight:850}.profile-copy{text-align:left}.profile-copy b{display:block;font-size:10px}.profile-copy small{display:block;font-size:8px;color:var(--muted);margin-top:2px}.profile-btn>i{font-size:9px;color:#8793a2}
+.profile-menu{position:fixed;right:16px;top:58px;background:#fff;border:1px solid var(--line);border-radius:9px;padding:5px;box-shadow:0 12px 30px rgba(23,42,62,.12);z-index:30}.profile-menu button{border:0;background:transparent;padding:9px 12px;font-size:10px;color:#9e3944}.profile-menu i{margin-right:7px}
+
+.app-main{max-width:920px;margin:0 auto;padding:20px 18px}
+.app-screen{display:none}.app-screen.active{display:block}
+.welcome-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px}.eyebrow{font-size:8px;font-weight:800;color:#7390a6;letter-spacing:.1em}.welcome-row h1{font-size:22px;margin:4px 0 3px}.welcome-row p{margin:0;font-size:10px;color:var(--muted)}.date-pill{background:#fff;border:1px solid var(--line);border-radius:8px;padding:7px 9px;font-size:9px;color:#627489}
+.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px}.quick-card{min-height:78px;border:1px solid var(--line);border-radius:12px;background:#fff;padding:12px;display:grid;grid-template-columns:38px 1fr auto;align-items:center;gap:10px;text-align:left}.quick-card>i{font-size:9px;color:#99a6b4}.quick-icon{width:38px;height:38px;border-radius:10px;background:#eef5fa;color:#126895;display:grid;place-items:center}.quick-card b{display:block;font-size:11px}.quick-card small{display:block;font-size:8px;color:var(--muted);margin-top:3px;line-height:1.4}
+.section-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.section-title b{font-size:12px}.section-title small{display:block;font-size:8px;color:var(--muted);margin-top:2px}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}.stat{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px}.stat span{display:block;font-size:8px;text-transform:uppercase;color:var(--muted)}.stat b{display:block;margin-top:5px;font-size:17px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:14px}.panel-head{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}.panel-head b{font-size:11px}.panel-head small{display:block;font-size:8px;color:var(--muted);margin-top:2px}.text-btn{border:0;background:transparent;color:#0b6b9f;font-size:9px;font-weight:700}
+.team-mini,.simple-list,.team-list{display:grid}.person-row{display:grid;grid-template-columns:36px 1fr auto;gap:9px;align-items:center;padding:11px 13px;border-bottom:1px solid #edf1f5}.person-row:last-child{border-bottom:0}.person-avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#f0f4f8;color:#5b6f83;font-size:10px;font-weight:800}.person-row b{display:block;font-size:10px}.person-row small{display:block;color:var(--muted);font-size:8px;margin-top:2px}.role-chip{padding:4px 7px;border-radius:999px;background:#eef5fa;color:#386b8b;font-size:8px;font-weight:750}
+.inline-spinner{width:18px;height:18px;border:2px solid #dfe5ec;border-top-color:#64788b;border-radius:50%;animation:spin .7s linear infinite;margin:26px auto}
+
+.screen-head{display:flex;align-items:center;gap:11px;margin-bottom:16px}.back-btn{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:#fff;color:#51657a}.screen-head h2{font-size:18px;margin:0}.screen-head p{font-size:9px;color:var(--muted);margin:3px 0 0}
+.attendance-status-card,.attendance-action-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}.status-line{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid #eef1f4;font-size:10px}.status-line:last-child{border-bottom:0}.status-line span{color:var(--muted)}.status-line b{font-size:10px}
+.requirement-row{display:grid;grid-template-columns:36px 1fr auto;align-items:center;gap:9px;padding:11px 0;border-bottom:1px solid #edf1f5}.requirement-button{width:100%;border:0;background:transparent;text-align:left}.req-icon{width:34px;height:34px;border-radius:9px;background:#f0f6fa;color:#176f9f;display:grid;place-items:center}.requirement-row b{display:block;font-size:10px}.requirement-row small{display:block;font-size:8px;color:var(--muted);margin-top:2px}.req-state{font-size:8px;padding:4px 7px;border-radius:999px;background:#fff2df;color:#9d6a17}.req-state.ok{background:#e8f7ef;color:#157b50}
+.primary-action,.secondary-action{height:42px;border-radius:9px;font-size:10px;font-weight:750}.full{width:100%;margin-top:10px}.primary-action{border:0;background:#0b6ca5;color:#fff}.primary-action:disabled{opacity:.45}.secondary-action{border:1px solid #d9e4ec;background:#fff;color:#486176}.camera-wrap{margin-top:12px;border:1px solid var(--line);border-radius:10px;padding:10px;background:#f9fbfc}.camera-wrap video,.camera-wrap img{width:100%;max-height:300px;object-fit:cover;border-radius:8px;background:#111}.camera-actions{display:flex;gap:8px;margin-top:8px}.camera-actions button{flex:1}
+.role-filter-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}.role-filter{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 10px;font-size:9px;color:#647588}.role-filter.active{background:#0d6fab;color:#fff;border-color:#0d6fab}
+.team-list{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.empty-work{background:#fff;border:1px solid var(--line);border-radius:12px;padding:44px 20px;text-align:center;color:var(--muted)}.empty-work i{display:block;font-size:25px;color:#7fa4bd;margin-bottom:10px}.empty-work b{display:block;font-size:11px;color:#415568}.empty-work span{display:block;font-size:9px;margin-top:5px;line-height:1.5}
+
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;height:66px;background:#fff;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:center;z-index:20;padding-bottom:env(safe-area-inset-bottom)}.bottom-item{min-width:82px;height:58px;border:0;background:transparent;color:#8190a2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-size:8px}.bottom-item i{font-size:14px}.bottom-item.active{color:#0d6fab}
+
+@media(max-width:850px){
+  .login-page{min-height:100dvh;height:100dvh;grid-template-columns:1fr;grid-template-rows:35vh 65vh;overflow:hidden}
+  .top-visual{min-height:35vh;height:35vh;border-radius:0 0 28px 28px}.visual-glow{width:290px}.visual-icon{width:100px;height:100px;border-radius:28px}.visual-icon i{font-size:42px}
+  .login-content{min-height:0;height:65vh;padding:16px 20px 8px;justify-content:flex-start;overflow:hidden}.login-title{font-size:24px;margin-bottom:12px}.field{margin-bottom:9px}.field label{margin-bottom:5px}.input,.login-btn{height:45px}
+  .app-main{padding:16px 13px}.quick-grid{grid-template-columns:1fr}.stat-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(min-width:851px){.bottom-nav{max-width:600px;left:50%;transform:translateX(-50%);border:1px solid var(--line);border-bottom:0;border-radius:14px 14px 0 0}}
+
+/* ===== Single app role UI v2 ===== */
+.safe-top{
+  height:30px;
+  background:#fff;
+}
+.app{
+  padding-top:0;
+}
+.app-top{
+  top:30px;
+}
+.app-main{
+  padding-top:18px;
+}
+.quick-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+}
+.quick-card{
+  grid-template-columns:38px 1fr;
+}
+.quick-card .text-icon{
+  font-size:11px;
+  font-weight:850;
+}
+.step-no{
+  width:26px;height:26px;border-radius:50%;
+  background:#0d6fab;color:#fff;display:grid;place-items:center;
+  font-size:10px;font-weight:850;margin-bottom:8px;
+}
+.attendance-step-copy b{display:block;font-size:11px}
+.attendance-step-copy small{display:block;margin-top:3px;font-size:9px;color:var(--muted);line-height:1.5}
+.attendance-verified{
+  background:#edf8f3;border:1px solid #cfe8dc;border-radius:10px;
+  padding:10px 12px;display:flex;gap:9px;align-items:center;margin-bottom:12px
+}
+.verified-dot{width:9px;height:9px;border-radius:50%;background:#168257}
+.attendance-verified b{display:block;font-size:10px;color:#176e4d}
+.attendance-verified small{display:block;margin-top:2px;font-size:8px;color:#5d7b6d}
+.work-toolbar,.activity-filter-row{
+  display:flex;align-items:center;gap:8px;margin-bottom:12px
+}
+.work-toolbar select,.activity-filter-row select{
+  height:36px;border:1px solid var(--line);border-radius:8px;background:#fff;padding:0 10px;font-size:10px;color:#4d6074
+}
+.work-toolbar span{margin-left:auto;font-size:9px;color:var(--muted)}
+.work-section-list{display:grid;gap:10px}
+.work-section-card{
+  background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 13px;
+  display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center
+}
+.work-section-card b{display:block;font-size:11px}
+.work-section-card small{display:block;font-size:8px;color:var(--muted);margin-top:3px;line-height:1.45}
+.work-section-card button{
+  border:0;background:#edf5fb;color:#0d679c;border-radius:8px;height:34px;padding:0 10px;font-size:9px;font-weight:800
+}
+.entry-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px}
+.entry-top-grid,.entry-fields{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.entry-field.full{grid-column:1/-1}
+.entry-field label{display:block;font-size:8px;text-transform:uppercase;font-weight:800;color:#6d7c8f;margin-bottom:5px}
+.entry-field input,.entry-field select,.entry-field textarea{
+  width:100%;border:1px solid var(--line);border-radius:8px;background:#fff;padding:9px;font-size:10px;color:#35495d;outline:none
+}
+.entry-field input,.entry-field select{height:40px}
+.entry-field textarea{min-height:78px;resize:vertical}
+.auto-result{
+  margin-top:12px;background:#f2f8fc;border:1px solid #d6e8f4;border-radius:9px;padding:10px 11px;font-size:9px;color:#4d6d84;line-height:1.55
+}
+.activity-list{display:grid;gap:9px}
+.activity-item{
+  background:#fff;border:1px solid var(--line);border-radius:11px;padding:11px 12px
+}
+.activity-item-top{display:flex;justify-content:space-between;gap:10px}
+.activity-item b{font-size:10px}
+.activity-item small{font-size:8px;color:var(--muted)}
+.activity-item .activity-meta{margin-top:6px;font-size:8px;color:#607386;line-height:1.5}
+.activity-status{display:inline-flex;padding:3px 6px;border-radius:999px;background:#eef5fa;color:#3e6986;font-size:8px;font-weight:800}
+.toast-stack{position:fixed;top:42px;right:12px;z-index:4000;display:grid;gap:7px;width:min(330px,calc(100vw - 24px))}
+.toast{
+  background:#fff;border:1px solid var(--line);box-shadow:0 10px 30px rgba(25,42,62,.14);border-radius:9px;padding:10px 11px;
+  font-size:9px;color:#4e6073
+}
+.toast.error{border-color:#f0cfd4;background:#fff5f6;color:#a63c47}
+.toast.success{border-color:#cee6da;background:#f1faf5;color:#16724d}
+.modal{position:fixed;inset:0;background:rgba(20,33,48,.34);display:flex;align-items:flex-end;justify-content:center;z-index:3000}
+.modal-box{width:min(620px,100%);max-height:88vh;overflow:auto;background:#fff;border-radius:16px 16px 0 0}
+.modal-head{height:50px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 14px}
+.modal-close{border:0;background:transparent;font-size:20px;color:#6b7a8c}
+.modal-body{padding:14px}
+.record-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.record-detail{padding:9px;border:1px solid #e8edf2;border-radius:8px}
+.record-detail span{display:block;font-size:8px;color:var(--muted);text-transform:uppercase}
+.record-detail b{display:block;margin-top:4px;font-size:10px}
+.record-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.record-actions button{height:34px;border-radius:8px;border:1px solid var(--line);background:#fff;padding:0 10px;font-size:9px;font-weight:800}
+.record-actions .approve{background:#168257;color:#fff;border-color:#168257}
+.record-actions .reopen{color:#95630f;border-color:#ead9b4}
+.record-actions .edit{color:#0d689e;border-color:#cfe0ec}
+@media(max-width:850px){
+  .safe-top{height:30px}
+  .app-top{top:30px}
+  .app{padding-bottom:74px}
+  .quick-grid{grid-template-columns:1fr}
+  .entry-top-grid,.entry-fields{grid-template-columns:1fr}
+  .entry-field.full{grid-column:auto}
+  .activity-filter-row{align-items:stretch}
+  .activity-filter-row select{flex:1;min-width:0}
+}
+
+/* Role + attendance refinement */
+.hen-watermark{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  pointer-events:none;
+}
+.hen-watermark i{
+  font-size:min(34vw,360px);
+  color:rgba(255,255,255,.055);
+  transform:scaleX(-1) rotate(-4deg);
+}
+.visual-icon{
+  background:transparent;
+  border:0;
+  box-shadow:none;
+}
+.visual-icon i{
+  font-size:68px;
+}
+.worker-only.hidden{display:none!important}
+.daily-summary-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  padding:12px;
+}
+.daily-summary-item{
+  border:1px solid #e8edf2;
+  border-radius:9px;
+  padding:10px;
+  background:#fbfcfe;
+}
+.daily-summary-item span{
+  display:block;
+  font-size:8px;
+  color:var(--muted);
+  text-transform:uppercase;
+}
+.daily-summary-item b{
+  display:block;
+  margin-top:5px;
+  font-size:14px;
+}
+.team-attendance-footer{padding:0 12px 12px}
+.worker-att-step{
+  margin-top:12px;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:#fbfcfe;
+}
+.worker-att-step>b{display:block;font-size:10px}
+.worker-att-step>small{display:block;font-size:8px;color:var(--muted);margin-top:3px}
+.bottom-item i{font-size:14px}
+.bottom-item b{font-size:8px}
+@media(max-width:850px){
+  .daily-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hen-watermark i{font-size:230px}
+}
+
+
+/* Header logout + profile menu */
+.top-actions{display:flex;align-items:center;gap:7px}
+.nav-logout-btn{
+  width:34px;height:34px;border:1px solid var(--line);border-radius:9px;
+  background:#fff;color:#7a8796;display:grid;place-items:center
+}
+.nav-logout-btn:hover{background:#f7f9fb;color:#a43d48}
+.profile-chevron{font-size:8px!important;color:#8793a2}
+.profile-menu{
+  top:70px;
+  min-width:190px;
+  padding:6px;
+}
+.profile-menu-user{
+  padding:9px 10px 10px;
+  border-bottom:1px solid #edf1f5;
+  margin-bottom:4px;
+}
+.profile-menu-user b{display:block;font-size:10px}
+.profile-menu-user small{display:block;margin-top:3px;font-size:8px;color:var(--muted)}
+.profile-menu button{
+  width:100%;
+  text-align:left;
+  border-radius:7px;
+}
+.profile-menu button:hover{background:#fff4f5}
+
+/* Activity audit */
+.activity-time-line{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:7px;
+  font-size:8px;
+  color:#8290a1;
+}
+.activity-time-line span{
+  padding:3px 6px;
+  border-radius:6px;
+  background:#f5f7f9;
+}
+
+/* Record detail view */
+.record-audit-box{
+  border:1px solid #e6ebf0;
+  border-radius:10px;
+  overflow:hidden;
+  margin-bottom:14px;
+}
+.record-audit-row{
+  display:grid;
+  grid-template-columns:120px 1fr;
+  gap:10px;
+  padding:9px 10px;
+  border-bottom:1px solid #edf1f4;
+  align-items:center;
+}
+.record-audit-row:last-child{border-bottom:0}
+.record-audit-row span{
+  font-size:8px;
+  color:#7a8797;
+  text-transform:uppercase;
+  font-weight:750;
+}
+.record-audit-row b{
+  font-size:10px;
+  color:#314458;
+  font-weight:700;
+}
+.record-values-title{
+  font-size:10px;
+  font-weight:800;
+  margin:0 0 8px;
+  color:#34485c;
+}
+.record-values-list{
+  display:grid;
+  gap:8px;
+}
+.record-value-box{
+  border:1px solid #e7ecf1;
+  border-radius:9px;
+  padding:10px 11px;
+  background:#fff;
+}
+.record-value-box span{
+  display:block;
+  font-size:8px;
+  text-transform:uppercase;
+  font-weight:750;
+  color:#7a8798;
+}
+.record-value-box b{
+  display:block;
+  margin-top:5px;
+  font-size:11px;
+  line-height:1.45;
+  color:#2f4256;
+  word-break:break-word;
+}
+.record-value-box a{
+  color:#0d6fab;
+  text-decoration:none;
+}
+.record-calc-box{
+  margin-top:10px;
+  padding:10px 11px;
+  border:1px solid #d6e8f4;
+  border-radius:9px;
+  background:#f5fafe;
+}
+.record-calc-box span{
+  display:block;
+  font-size:8px;
+  color:#668198;
+  text-transform:uppercase;
+  font-weight:750;
+}
+.record-calc-box b{
+  display:block;
+  margin-top:5px;
+  font-size:10px;
+  color:#345d79;
+  line-height:1.5;
+}
+@media(max-width:520px){
+  .profile-copy{display:none}
+  .record-audit-row{grid-template-columns:95px 1fr}
+}
+
+
+/* Working hours + login timer */
+.login-clock{
+  min-width:92px;
+  text-align:right;
+  line-height:1.1;
+}
+.login-clock span{
+  display:block;
+  font-size:7px;
+  color:#8a96a5;
+  letter-spacing:.08em;
+  font-weight:800;
+}
+.login-clock b{
+  display:block;
+  margin-top:2px;
+  font-size:10px;
+  color:#34495d;
+}
+.login-clock small{
+  display:block;
+  margin-top:2px;
+  font-size:8px;
+  color:#718194;
+  font-variant-numeric:tabular-nums;
+}
+.nav-logout-btn{
+  width:auto!important;
+  min-width:72px;
+  padding:0 10px;
+  gap:6px;
+  display:flex!important;
+  align-items:center;
+  justify-content:center;
+  font-size:9px;
+  font-weight:750;
+}
+.nav-logout-btn span{display:inline}
+
+.work-hours-banner{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:11px;
+  padding:11px 12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:14px;
+}
+.work-hours-banner span{
+  display:block;
+  font-size:8px;
+  color:#7a8899;
+  font-weight:800;
+  letter-spacing:.06em;
+}
+.work-hours-banner b{
+  display:block;
+  margin-top:4px;
+  font-size:11px;
+  color:#33485c;
+}
+.work-hours-banner strong{
+  padding:5px 8px;
+  border-radius:999px;
+  background:#eef2f6;
+  color:#617285;
+  font-size:8px;
+  font-weight:800;
+  white-space:nowrap;
+}
+.work-hours-banner strong.open{
+  background:#e8f7ef;
+  color:#15794f;
+}
+.work-hours-banner strong.before{
+  background:#fff5e5;
+  color:#9a6a18;
+}
+.work-hours-banner strong.closed{
+  background:#fff0f1;
+  color:#ab404a;
+}
+
+@media(max-width:520px){
+  .app-top{
+    padding-left:12px;
+    padding-right:12px;
+  }
+  .login-clock{
+    min-width:78px;
+  }
+  .login-clock span{display:none}
+  .nav-logout-btn{
+    min-width:38px;
+    width:38px!important;
+    padding:0;
+  }
+  .nav-logout-btn span{display:none}
+}
+
+
+/* App boot: prevents login flash/buffer on every open */
+.boot-screen{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:#fff;
+  display:grid;
+  place-items:center;
+  transition:opacity .16s ease;
+}
+.boot-screen.hide{
+  opacity:0;
+  pointer-events:none;
+}
+.boot-spinner{
+  width:22px;
+  height:22px;
+  border:2px solid #dfe5eb;
+  border-top-color:#677a8d;
+  border-radius:50%;
+  animation:spin .72s linear infinite;
+}
+
+
+/* ===== Matched file chooser design ===== */
+.entry-file-wrap{display:flex;align-items:center;gap:8px;min-height:40px}
+.entry-file-native{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
+.entry-file-btn{height:40px;flex:0 0 auto;border:1px solid #d9e4ec;border-radius:8px;background:#fff;color:#486176;padding:0 12px;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-size:9px;font-weight:800;cursor:pointer;transition:.15s ease}
+.entry-file-btn:hover{background:#f7fafc;border-color:#c9d8e3}
+.entry-file-btn i{color:#176f9f;font-size:10px}
+.entry-file-name{min-width:0;flex:1;height:40px;border:1px solid var(--line);border-radius:8px;background:#fff;color:#7a8899;padding:0 10px;display:flex;align-items:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:9px}
+.entry-file-name.has-file{color:#35495d}
+@media(max-width:520px){.entry-file-wrap{gap:7px}.entry-file-btn{padding:0 10px}}
+
+
+/* ===== Floating mixed bottom navigation ===== */
+.bottom-nav{
+  left:50%!important;
+  right:auto!important;
+  bottom:10px!important;
+  width:max-content!important;
+  max-width:calc(100vw - 22px)!important;
+  height:auto!important;
+  min-height:58px;
+  transform:translateX(-50%)!important;
+  padding:6px!important;
+  gap:6px!important;
+  border:1px solid #e2e8ee!important;
+  border-radius:17px!important;
+  background:rgba(255,255,255,.96)!important;
+  box-shadow:0 10px 28px rgba(31,53,76,.13)!important;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.bottom-nav::-webkit-scrollbar{display:none}
+.bottom-item{
+  min-width:68px!important;
+  height:46px!important;
+  padding:0 10px!important;
+  border-radius:11px!important;
+  flex:0 0 auto;
+  gap:4px!important;
+  transition:background .16s ease,color .16s ease,transform .16s ease!important;
+}
+.bottom-item:hover{background:#f4f7fa}
+.bottom-item.active{
+  background:#edf5fb!important;
+  color:#0d6fab!important;
+}
+.bottom-item.active i{transform:translateY(-1px)}
+@media(max-width:520px){
+  .bottom-nav{
+    bottom:8px!important;
+    gap:5px!important;
+    padding:5px!important;
+    max-width:calc(100vw - 16px)!important;
+  }
+  .bottom-item{
+    min-width:62px!important;
+    height:45px!important;
+    padding:0 8px!important;
+  }
+}
+
+
+/* ===== Top navigation scroll/blend fix ===== */
+.safe-top{
+  height:30px!important;
+  background:#fff!important;
+  position:static!important;
+}
+
+.app-top{
+  position:relative!important;
+  top:auto!important;
+  height:auto!important;
+  min-height:62px!important;
+  padding:10px 18px!important;
+  background:#fff!important;
+  border-bottom:1px solid #edf1f4!important;
+  box-shadow:none!important;
+  z-index:auto!important;
+}
+
+.app{
+  min-height:100dvh;
+  overflow:visible!important;
+}
+
+.app-main{
+  padding-top:16px!important;
+  position:relative;
+  z-index:1;
+}
+
+/* Header becomes part of the page instead of sitting over scrolling content */
+body{
+  overflow-x:hidden;
+  overflow-y:auto;
+}
+
+@media(max-width:850px){
+  .safe-top{
+    height:30px!important;
+  }
+
+  .app-top{
+    position:relative!important;
+    top:auto!important;
+    min-height:58px!important;
+    padding:9px 12px!important;
+  }
+
+  .app-main{
+    padding-top:14px!important;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="boot-screen" id="bootScreen">
+  <span class="boot-spinner"></span>
+</div>
+
+<!-- LOGIN VIEW -->
+<div class="login-page hidden" id="loginView">
+  <div class="login-card">
+
+    <div class="top-visual">
+      <div class="hen-watermark"><i class="fa-solid fa-kiwi-bird"></i></div>
+      <div class="visual-icon">
+        <i class="fa-solid fa-kiwi-bird"></i>
+      </div>
+      <div class="visual-dots">
+        <span></span><span></span><span></span><span></span>
+      </div>
+    </div>
+
+    <div class="login-content">
+      <div class="login-title">Login</div>
+
+      <form id="loginForm" autocomplete="off">
+        <div class="field">
+          <label>Login ID</label>
+          <div class="input">
+            <i class="fa-regular fa-user"></i>
+            <input id="loginId" type="text" placeholder="Enter Login ID"
+              autocomplete="username" autocapitalize="none" spellcheck="false" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Village</label>
+          <div class="input">
+            <i class="fa-solid fa-location-dot"></i>
+            <select id="villageSelect" required>
+              <option value="">Loading villages...</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Password</label>
+          <div class="input">
+            <i class="fa-solid fa-lock"></i>
+            <input id="password" type="password" placeholder="Enter password"
+              autocomplete="current-password" required>
+            <button class="eye" id="eyeBtn" type="button" aria-label="Show password">
+              <i class="fa-regular fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <button class="login-btn" id="loginBtn" type="submit"><span>Login</span></button>
+        <div class="message" id="message"></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP VIEW -->
+<div class="app hidden" id="appView">
+  <div class="safe-top"></div>
+
+  <header class="app-top">
+    <div class="app-brand">
+      <div>
+        <b id="topRoleName">Workspace</b>
+        <small id="topLocation">—</small>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <div class="login-clock">
+        <span>WORK LOGIN</span>
+        
+        <small id="navWorkDuration">00:00:00</small>
+      </div>
+      <button class="nav-logout-btn" id="navLogoutBtn" type="button">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span>Logout</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="app-main">
+
+    <!-- HOME -->
+    <section class="app-screen active" id="screenHome">
+      <div class="welcome-row">
+        <div>
+          <span class="eyebrow">TODAY</span>
+          <h1 id="welcomeName">Welcome</h1>
+          <p id="welcomeSub">Your work overview</p>
+        </div>
+        <div class="date-pill" id="todayLabel">—</div>
+      </div>
+
+      <div class="work-hours-banner" id="workHoursBanner">
+        <div>
+          <span>WORKING HOURS</span>
+          <b id="workHoursText">Loading...</b>
+        </div>
+
+      </div>
+
+      <div class="quick-grid">
+        <button class="quick-card attendance-card" data-go="attendance">
+          <span class="quick-icon text-icon">A</span>
+          <span>
+            <b>Attendance</b>
+            <small id="attendanceQuickText">Location first, then face</small>
+          </span>
+        </button>
+
+        <button class="quick-card manager-only supervisor-only worker-only hidden" data-go="work">
+          <span class="quick-icon text-icon">W</span>
+          <span>
+            <b>Daily Work</b>
+            <small id="workQuickText">Operational entries</small>
+          </span>
+        </button>
+
+        <button class="quick-card manager-only supervisor-only hidden" data-go="team">
+          <span class="quick-icon text-icon">T</span>
+          <span>
+            <b>Team</b>
+            <small id="teamQuickText">Live staff activity</small>
+          </span>
+        </button>
+      </div>
+
+      <div class="section-title">
+        <div>
+          <b>Today's Summary</b>
+          <small>Live from your assigned location</small>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat"><span>Attendance</span><b id="statAttendance">—</b></div>
+        <div class="stat manager-only supervisor-only hidden"><span>Working Now</span><b id="statTeamPresent">0</b></div>
+        <div class="stat manager-only hidden"><span>Total Staff</span><b id="statTotalStaff">0</b></div>
+        <div class="stat"><span>Today's Entries</span><b id="statPendingWork">0</b></div>
+      </div>
+
+
+      <div class="panel" id="dailyProductionPanel">
+        <div class="panel-head">
+          <div>
+            <b>Today's Farm Summary</b>
+            <small>Automatically calculated from today's supervisor entries</small>
+          </div>
+        </div>
+        <div class="daily-summary-grid">
+          <div class="daily-summary-item"><span>Closing Hens</span><b id="sumClosingBirds">0</b></div>
+          <div class="daily-summary-item"><span>Hens Sold</span><b id="sumSoldBirds">0</b></div>
+          <div class="daily-summary-item"><span>Mortality</span><b id="sumMortality">0</b></div>
+          <div class="daily-summary-item"><span>Total Eggs</span><b id="sumEggs">0</b></div>
+          <div class="daily-summary-item"><span>Good Eggs</span><b id="sumGoodEggs">0</b></div>
+          <div class="daily-summary-item"><span>Feed Used</span><b id="sumFeed">0 KG</b></div>
+        </div>
+      </div>
+
+      <div class="panel manager-only supervisor-only hidden">
+        <div class="panel-head">
+          <div>
+            <b>Live Activity</b>
+            <small id="activitySub">Latest team updates</small>
+          </div>
+          <button class="text-btn" data-go="activity">View all</button>
+        </div>
+        <div class="simple-list" id="activityMini">
+          <div class="inline-spinner"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ATTENDANCE -->
+    <section class="app-screen" id="screenAttendance">
+      <div class="screen-head">
+        <button class="back-btn" data-go="home">‹</button>
+        <div>
+          <h2>Attendance</h2>
+          <p>Current location first. Face capture appears after location is verified.</p>
+        </div>
+      </div>
+
+      <div class="attendance-status-card">
+        <div class="status-line"><span>Status</span><b id="attendanceStatus">Not checked in</b></div>
+        <div class="status-line"><span>Check In</span><b id="attendanceCheckIn">—</b></div>
+        <div class="status-line"><span>Check Out</span><b id="attendanceCheckOut">—</b></div>
+        <div class="status-line"><span>Worked</span><b id="attendanceWorked">0 hrs</b></div>
+      </div>
+
+      <div class="attendance-action-card" id="locationStep">
+        <div class="attendance-step-copy">
+          <b>Current Location</b>
+          <small id="locationRequirementText">Verify your live location.</small>
+        </div>
+        <button class="primary-action full" id="getLocationBtn" type="button">Use Current Location</button>
+      </div>
+
+      <div class="attendance-action-card hidden" id="faceStep">
+        <div class="attendance-step-copy">
+          <b>Face Attendance</b>
+          <small>Use the camera to mark attendance.</small>
+        </div>
+
+        <button class="secondary-action full" id="startCameraBtn" type="button">Open Camera</button>
+
+        <div class="camera-wrap hidden" id="cameraWrap">
+          <video id="cameraVideo" autoplay playsinline muted></video>
+          <canvas id="cameraCanvas" class="hidden"></canvas>
+          <img id="facePreview" class="hidden" alt="Face preview">
+          <div class="camera-actions">
+            <button class="secondary-action" id="captureFaceBtn" type="button">Capture</button>
+            <button class="secondary-action hidden" id="retakeFaceBtn" type="button">Retake</button>
+          </div>
+        </div>
+
+        <button class="primary-action full" id="checkInBtn" type="button" disabled>Work Login</button>
+        <button class="primary-action full hidden" id="checkOutBtn" type="button">Work Logout</button>
+      </div>
+
+      <div class="attendance-verified hidden" id="attendanceVerified">
+        <span class="verified-dot"></span>
+        <div>
+          <b>Location verified</b>
+          <small id="verifiedLocationText">—</small>
+        </div>
+      </div>
+
+      <div class="message" id="attendanceMessage"></div>
+
+      <div class="panel manager-only supervisor-only hidden">
+        <div class="panel-head">
+          <div>
+            <b>Team Attendance</b>
+            <small>Today</small>
+          </div>
+        </div>
+        <div class="simple-list" id="teamAttendanceList">
+          <div class="inline-spinner"></div>
+        </div>
+        <div class="supervisor-only hidden team-attendance-footer">
+          <button class="secondary-action full" id="markWorkerAttendanceBtn" type="button">Mark Worker Attendance</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- WORK -->
+    <section class="app-screen" id="screenWork">
+      <div class="screen-head">
+        <button class="back-btn" data-go="home">‹</button>
+        <div>
+          <h2>Daily Work</h2>
+          <p id="workSub">Role-based operational entries</p>
+        </div>
+      </div>
+
+      <div class="work-toolbar">
+        <select id="workGroupFilter">
+          <option value="">All Groups</option>
+        </select>
+        <span id="workCount">0 sections</span>
+      </div>
+
+      <div class="work-section-list" id="workSectionList">
+        <div class="inline-spinner"></div>
+      </div>
+    </section>
+
+    <!-- WORK ENTRY -->
+    <section class="app-screen" id="screenEntry">
+      <div class="screen-head">
+        <button class="back-btn" data-go="work">‹</button>
+        <div>
+          <h2 id="entryTitle">Work Entry</h2>
+          <p id="entryPermission">—</p>
+        </div>
+      </div>
+
+      <form id="workEntryForm" class="entry-card">
+        <input type="hidden" id="entrySectionKey">
+        <input type="hidden" id="entryEditId">
+
+        <div class="entry-top-grid">
+          <div class="entry-field">
+            <label>Date</label>
+            <input id="entryDate" type="date" required>
+          </div>
+          <div class="entry-field">
+            <label>Location</label>
+            <input id="entryLocation" type="text" readonly>
+          </div>
+        </div>
+
+        <div class="entry-fields" id="entryFields"></div>
+
+        <div class="auto-result hidden" id="entryAutoResult"></div>
+
+        <button class="primary-action full" id="saveEntryBtn" type="submit">Save</button>
+      </form>
+    </section>
+
+    <!-- TEAM -->
+    <section class="app-screen" id="screenTeam">
+      <div class="screen-head">
+        <button class="back-btn" data-go="home">‹</button>
+        <div>
+          <h2>Team</h2>
+          <p id="teamScreenSub">Assigned staff</p>
+        </div>
+      </div>
+
+      <div class="role-filter-row">
+        <button class="role-filter active" data-role-filter="">All</button>
+        <button class="role-filter manager-only hidden" data-role-filter="supervisor">Supervisors</button>
+        <button class="role-filter" data-role-filter="worker">Workers</button>
+      </div>
+
+      <div class="team-list" id="teamList">
+        <div class="inline-spinner"></div>
+      </div>
+    </section>
+
+    <!-- ACTIVITY -->
+    <section class="app-screen" id="screenActivity">
+      <div class="screen-head">
+        <button class="back-btn" data-go="home">‹</button>
+        <div>
+          <h2>Live Activity</h2>
+          <p id="activityScreenSub">Supervisor and worker updates</p>
+        </div>
+      </div>
+
+      <div class="activity-filter-row">
+        <select id="activityUserFilter">
+          <option value="">All Staff</option>
+        </select>
+        <select id="activitySectionFilter">
+          <option value="">All Sections</option>
+        </select>
+      </div>
+
+      <div class="activity-list" id="activityList">
+        <div class="inline-spinner"></div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="bottom-item active" data-go="home"><i class="fa-solid fa-house"></i><b>Home</b></button>
+    <button class="bottom-item" data-go="attendance"><i class="fa-solid fa-user-check"></i><b>Attendance</b></button>
+    <button class="bottom-item manager-only supervisor-only worker-only hidden" data-go="work"><i class="fa-solid fa-clipboard-list"></i><b>Work</b></button>
+    <button class="bottom-item manager-only supervisor-only hidden" data-go="team"><i class="fa-solid fa-users"></i><b>Team</b></button>
+  </nav>
+
+  <div class="toast-stack" id="toastStack"></div>
+</div>
+
+<!-- WORK ASSIGNMENT / ADMIN-MANAGER MODAL -->
+
+<div class="modal hidden" id="workerAttendanceModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <b>Worker Attendance</b>
+      <button type="button" class="modal-close" id="workerAttendanceClose">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="entry-field">
+        <label>Worker</label>
+        <select id="workerAttendanceUser"></select>
+      </div>
+
+      <div class="worker-att-step" id="workerGeoStep">
+        <b>Current Location</b>
+        <small>Supervisor's live location is required.</small>
+        <button class="secondary-action full" id="workerGeoBtn" type="button">Use Current Location</button>
+      </div>
+
+      <div class="worker-att-step hidden" id="workerFaceStep">
+        <b>Worker Face</b>
+        <small>Back camera opens for worker attendance.</small>
+        <button class="secondary-action full" id="workerCameraBtn" type="button">Open Back Camera</button>
+
+        <div class="camera-wrap hidden" id="workerCameraWrap">
+          <video id="workerCameraVideo" autoplay playsinline muted></video>
+          <canvas id="workerCameraCanvas" class="hidden"></canvas>
+          <img id="workerFacePreview" class="hidden" alt="Worker face">
+          <div class="camera-actions">
+            <button class="secondary-action" id="workerCaptureBtn" type="button">Capture</button>
+            <button class="secondary-action hidden" id="workerRetakeBtn" type="button">Retake</button>
+          </div>
+        </div>
+
+        <button class="primary-action full" id="saveWorkerAttendanceBtn" type="button" disabled>Mark Present</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal hidden" id="entryActionModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <b id="entryActionTitle">Record</b>
+      <button type="button" class="modal-close" id="entryActionClose">×</button>
+    </div>
+    <div class="modal-body" id="entryActionBody"></div>
+  </div>
+</div>
+
+<script>
+const CONFIG = {
+  supabaseUrl: "https://jdctwtujkdqlvgubkbss.supabase.co",
+  supabaseAnonKey: "sb_publishable_UZf_GS7j0isOzvlHpKNv2g_pAhrfIU7"
+};
+const sb = window.supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseAnonKey);
+const TODAY = new Date().toISOString().slice(0,10);
+
+const OPERATION_SECTIONS = {
+  farm_batch:{
+    label:"Farm / Batch",group:"Production",supervisor:"View",manager:"Add/Edit",
+    fields:[
+      ["farm_id","Farm ID","text",true],["shed_no","Shed No","text",true],
+      ["flock_id","Batch / Flock ID","text",true],["breed","Breed","text",true],
+      ["batch_start_date","Batch Start Date","date",true],["birds_received","Chicks / Birds Received","number",true]
+    ]
+  },
+  bird_movement:{
+    label:"Bird Movement",group:"Production",supervisor:"Add",manager:"Add/Edit",
+    fields:[
+      ["opening_birds","Opening Birds","number",true],["birds_received","Birds Received","number",false],
+      ["transfer_in","Transferred In","number",false],["transfer_out","Transferred Out","number",false],
+      ["mortality","Mortality","number",false],["culling","Culling","number",false],
+      ["sale_removed","Sale / Removal Birds","number",false]
+    ],auto:"bird_closing"
+  },
+  mortality_details:{
+    label:"Mortality Details",group:"Production",supervisor:"Add",manager:"Add/Edit",
+    fields:[
+      ["dead_birds","Dead Birds Count","number",true],["reason","Reason","text",true],
+      ["age_week","Age / Week","text",false],["shed","Shed","text",false],
+      ["notes","Notes","textarea",false],["photo","Photo / Proof","file",false]
+    ]
+  },
+  daily_egg_production:{
+    label:"Daily Egg Production",group:"Eggs",supervisor:"Add/Edit",manager:"Add/Edit",
+    fields:[
+      ["total_eggs","Total Eggs","number",true],["good_eggs","Good Eggs","number",false],
+      ["broken_eggs","Broken Eggs","number",false],["cracked_eggs","Cracked Eggs","number",false],
+      ["dirty_rejected","Dirty / Rejected Eggs","number",false]
+    ],auto:"egg_containers"
+  },
+  egg_grade:{
+    label:"Egg Grade",group:"Eggs",supervisor:"Add",manager:"Add/Edit",
+    fields:[
+      ["small","Small Count","number",false],["medium","Medium Count","number",false],
+      ["large","Large Count","number",false],["xl","XL Count","number",false]
+    ],auto:"egg_grade_total"
+  },
+  egg_dispatch:{
+    label:"Egg Dispatch",group:"Eggs",supervisor:"Add",manager:"Add/Edit",
+    fields:[
+      ["available_eggs","Available Eggs","number",true],["eggs_dispatched","Eggs Dispatched","number",true],
+      ["trays_boxes","Trays / Boxes","number",false],["destination","Customer / Warehouse Destination","text",true]
+    ],auto:"egg_balance"
+  },
+  feed_received:{
+    label:"Feed Received",group:"Feed",supervisor:"Add",manager:"Add/Edit",
+    fields:[
+      ["feed_type","Feed Type","text",true],["batch_lot_no","Batch / Lot No.","text",false],
+      ["quantity_kg","Quantity Received (KG)","number",true],["supplier","Supplier / Feed Mill","text",false],
+      ["vehicle_challan","Vehicle / Challan Reference","text",false]
+    ]
+  },
+  feed_consumption:{
+    label:"Feed Consumption",group:"Feed",supervisor:"Add/Edit",manager:"Add/Edit",
+    fields:[
+      ["feed_type","Feed Type","text",true],["shed","Shed","text",false],
+      ["quantity_kg","Quantity Issued / Used (KG)","number",true],["feeding_shift","Feeding Time / Shift","text",false]
+    ]
+  },
+  feed_wastage:{
+    label:"Feed Wastage",group:"Feed",supervisor:"Add",manager:"Add/Edit",
+    fields:[["wastage_kg","Wastage / Spillage (KG)","number",true],["reason","Reason","text",true]]
+  },
+  feed_stock_check:{
+    label:"Feed Stock Check",group:"Feed",supervisor:"Add",manager:"Approve/Edit",
+    fields:[
+      ["system_stock_kg","System Stock (KG)","number",false],["physical_stock_kg","Physical Stock (KG)","number",true],
+      ["notes","Verification Notes","textarea",false]
+    ],auto:"feed_variance"
+  },
+  water:{
+    label:"Water",group:"Environment",supervisor:"Add",manager:"Add/Edit",
+    fields:[
+      ["water_consumed","Water Consumed / Meter Reading","number",true],["tank_level","Tank Level","text",false],
+      ["abnormal_note","Abnormal Consumption Note","textarea",false]
+    ]
+  },
+  medicine:{
+    label:"Medicine",group:"Health",supervisor:"Add",manager:"Add/Edit",
+    fields:[
+      ["medicine_name","Medicine Name","text",true],["quantity","Quantity","number",true],
+      ["dose","Dose","text",true],["reason","Reason","text",false],
+      ["start_date","Start Date","date",false],["end_date","End Date","date",false]
+    ]
+  },
+  vaccination:{
+    label:"Vaccination",group:"Health",supervisor:"Add",manager:"Add/Edit",
+    fields:[
+      ["vaccine_name","Vaccine Name","text",true],["batch_no","Batch No.","text",false],
+      ["dose","Dose","text",true],["vaccination_at","Vaccination Date / Time","datetime-local",true],
+      ["next_due_date","Next Due Date","date",false]
+    ]
+  },
+  health_observation:{
+    label:"Health Observation",group:"Health",supervisor:"Add",manager:"Add/Edit",
+    fields:[
+      ["sick_birds","Sick Birds","number",false],["symptoms","Symptoms","textarea",true],
+      ["treatment","Treatment Note","textarea",false],["vet_details","Veterinarian Visit / Details","textarea",false]
+    ]
+  },
+  bird_weight:{
+    label:"Bird Weight",group:"Health",supervisor:"Add",manager:"Add/Edit",
+    fields:[
+      ["sample_count","Sample Birds Count","number",true],["avg_weight","Average Body Weight","number",true],
+      ["min_weight","Min Weight","number",false],["max_weight","Max Weight","number",false]
+    ]
+  },
+  uniformity:{
+    label:"Uniformity",group:"Health",supervisor:"Add",manager:"Add/Edit",
+    fields:[["uniformity_percent","Bird Uniformity %","number",true]]
+  },
+  temperature:{
+    label:"Temperature",group:"Environment",supervisor:"Add/Edit",manager:"Add/Edit",
+    fields:[
+      ["morning_temp","Morning °C","number",false],["afternoon_temp","Afternoon °C","number",false],
+      ["evening_temp","Evening °C","number",false],["min_temp","Min °C","number",false],["max_temp","Max °C","number",false]
+    ]
+  },
+  humidity:{
+    label:"Humidity",group:"Environment",supervisor:"Add/Edit",manager:"Add/Edit",
+    fields:[["humidity_percent","Shed Humidity %","number",true]]
+  },
+  ventilation:{
+    label:"Ventilation",group:"Environment",supervisor:"Add",manager:"Add/Edit",
+    fields:[["fan_status","Fan Status","text",false],["cooling_pad_status","Cooling Pad Status","text",false],["problem","Ventilation Problem","textarea",false]]
+  },
+  lighting:{
+    label:"Lighting",group:"Environment",supervisor:"Add",manager:"Add/Edit",
+    fields:[["light_on","Light ON Time","time",false],["light_off","Light OFF Time","time",false],["duration_hours","Lighting Duration Hours","number",false],["issue","Lighting Issue","textarea",false]]
+  },
+  electricity:{
+    label:"Electricity",group:"Utilities",supervisor:"Add",manager:"Add/Edit",
+    fields:[["previous_meter","Previous Meter Reading","number",false],["current_meter","Current Meter Reading","number",true],["power_cut_hours","Power Cut Hours","number",false]],
+    auto:"electricity_units"
+  },
+  generator:{
+    label:"Generator",group:"Utilities",supervisor:"Add",manager:"Add/Edit",
+    fields:[["dg_hours","DG Running Hours","number",true],["diesel_used","Diesel Used","number",false]]
+  },
+  environment:{
+    label:"Environment",group:"Environment",supervisor:"Add",manager:"Add/Edit",
+    fields:[["ammonia","Ammonia / Air Quality Reading","text",false],["litter_moisture","Litter / Moisture Condition","text",false]]
+  },
+  litter_manure:{
+    label:"Litter / Manure",group:"Environment",supervisor:"Add",manager:"Add/Edit",
+    fields:[["litter_condition","Litter Condition","text",true],["manure_qty","Manure Removed Quantity","number",false],["removed_date","Removed Date","date",false]]
+  },
+  biosecurity:{
+    label:"Biosecurity",group:"Biosecurity",supervisor:"Add",manager:"Add/Edit",
+    fields:[["disinfection_done","Disinfection Done","select:Yes|No",true],["footbath_status","Footbath Status","text",false],["sanitation","Shed Sanitation","text",false],["vehicle_visitor_entry","Vehicle / Visitor Entry Note","textarea",false]]
+  },
+  cleaning:{
+    label:"Cleaning",group:"Biosecurity",supervisor:"Add",manager:"Add/Edit",
+    fields:[["shed_cleaning","Shed Cleaning","select:Done|Pending",false],["water_line","Water-line Cleaning","select:Done|Pending",false],["feeder_drinker","Feeder / Drinker Cleaning","select:Done|Pending",false]]
+  },
+  pest_control:{
+    label:"Pest Control",group:"Biosecurity",supervisor:"Add",manager:"Add/Edit",
+    fields:[["issue","Flies / Rodents / Pest Issue","textarea",true],["treatment","Treatment","textarea",false]]
+  },
+  equipment:{
+    label:"Equipment",group:"Maintenance",supervisor:"Add",manager:"Add/Edit",
+    fields:[["equipment_name","Equipment","text",true],["problem","Problem","textarea",true],["status","Status","text",false]]
+  },
+  maintenance:{
+    label:"Maintenance",group:"Maintenance",supervisor:"Add",manager:"Add/Edit/Approve",
+    fields:[["issue","Issue","textarea",true],["priority","Priority","select:Low|Medium|High|Critical",true],["photo","Photo","file",false],["repair_status","Repair Status","text",false],["repair_cost","Repair Cost","number",false]]
+  },
+  stock_medicines:{
+    label:"Stock – Medicines",group:"Stock",supervisor:"Add",manager:"Add/Edit",
+    fields:[["medicine","Medicine","text",true],["received","Received","number",false],["used","Used","number",false],["expired_damaged","Expired / Damaged","number",false]]
+  },
+  stock_materials:{
+    label:"Stock – Farm Materials",group:"Stock",supervisor:"Add",manager:"Add/Edit",
+    fields:[["item","Material Item","text",true],["received","Received","number",false],["used","Used","number",false],["unit","Unit","text",false]]
+  },
+  lab_samples:{
+    label:"Lab Samples",group:"Lab",supervisor:"Add",manager:"Add/Edit",
+    fields:[["sample_type","Sample Type","select:Feed|Water|Blood|Egg|Other",true],["sample_id","Sample ID","text",true],["lab_name","Lab Name","text",false],["sent_date","Sent Date","date",true]]
+  },
+  lab_result:{
+    label:"Lab Result Entry",group:"Lab",supervisor:"Upload",manager:"Verify",
+    fields:[["sample_id","Sample ID","text",true],["result_notes","Result / Reference","textarea",false],["result_file","Result Upload","file",true]]
+  },
+  staff_attendance:{
+    label:"Staff Attendance",group:"Staff",supervisor:"Add/Edit",manager:"Add/Edit",
+    fields:[["worker_name","Worker Name","text",true],["attendance","Attendance","select:Present|Absent|Leave|Half Day",true],["shift","Shift","text",false],["overtime","Overtime Hours","number",false]]
+  },
+  visitors:{
+    label:"Visitors",group:"Staff",supervisor:"Add",manager:"Add/Edit",
+    fields:[["visitor_name","Visitor Name","text",true],["purpose","Purpose","text",true],["entry_time","Entry Time","datetime-local",true],["exit_time","Exit Time","datetime-local",false]]
+  },
+  daily_expenses:{
+    label:"Daily Expenses",group:"Finance",supervisor:"Add",manager:"Approve/Edit",
+    fields:[["expense_type","Expense Type","text",true],["amount","Amount","number",true],["bill_photo","Bill / Photo","file",false],["remarks","Remarks","textarea",false]]
+  },
+  purchases:{
+    label:"Purchases at Farm",group:"Finance",supervisor:"Add",manager:"Approve/Edit",
+    fields:[["item","Item","text",true],["quantity","Quantity","number",true],["rate","Rate","number",true],["supplier","Supplier","text",false],["bill","Bill","file",false]],
+    auto:"purchase_total"
+  },
+  incidents:{
+    label:"Incidents",group:"Incidents",supervisor:"Add",manager:"Manage/Edit",
+    fields:[["incident_type","Incident Type","select:Disease Outbreak|Power Failure|Water Issue|Theft|Animal Attack|Other Emergency",true],["details","Details","textarea",true],["priority","Priority","select:Low|Medium|High|Critical",false],["photo","Photo","file",false]]
+  },
+  photos_proof:{
+    label:"Photos / Proof",group:"Proof",supervisor:"Upload",manager:"View/Delete/Approve",
+    fields:[["proof_type","Proof Type","select:Mortality|Stock|Medicine|Maintenance|Bill|Daily Proof|Other",true],["file","Upload File","file",true],["notes","Notes","textarea",false]]
+  },
+  remarks:{
+    label:"Remarks",group:"Closing",supervisor:"Add",manager:"Add/Edit",
+    fields:[["remark","Supervisor Daily Note / Special Observation","textarea",true]]
+  },
+  day_closing:{
+    label:"Day Closing",group:"Closing",supervisor:"Submit",manager:"Approve/Reopen",
+    fields:[["confirm_complete","Confirm Today's Entries Complete","select:Yes|No",true],["closing_note","Closing Note","textarea",false]],
+    auto:"day_completion"
+  }
+};
+
+let CURRENT_USER=null;
+let CURRENT_LOCATION=null;
+let CURRENT_SESSION_ID=null;
+let CURRENT_ATTENDANCE=null;
+let TEAM_CACHE=[];
+let ACTIVITY_CACHE=[];
+let ASSIGNMENT_CACHE=[];
+let FACE_BLOB=null;
+let GEO=null;
+let CAMERA_STREAM=null;
+let WORKER_CAMERA_STREAM=null;
+let WORKER_FACE_BLOB=null;
+let WORKER_GEO=null;
+let REALTIME_CHANNEL=null;
+let MESSAGE_TIMERS=new WeakMap();
+let LOCATION_WORK_SCHEDULE = null;
+let SESSION_STARTED_AT = null;
+let LOGIN_TIMER_ID = null;
+
+const loginView=document.getElementById("loginView");
+const appView=document.getElementById("appView");
+const loginForm=document.getElementById("loginForm");
+const loginBtn=document.getElementById("loginBtn");
+const loginIdInput=document.getElementById("loginId");
+const villageSelect=document.getElementById("villageSelect");
+const passwordInput=document.getElementById("password");
+const messageBox=document.getElementById("message");
+const eyeBtn=document.getElementById("eyeBtn");
+
+const esc=v=>String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+const niceTime=v=>v?new Date(v).toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"}):"—";
+const niceDateTime=v=>v?new Date(v).toLocaleString("en-IN",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}):"—";
+const initials=name=>String(name||"U").trim().split(/\s+/).slice(0,2).map(x=>x[0]||"").join("").toUpperCase();
+const roleLabel=role=>String(role||"").replaceAll("_"," ").replace(/\b\w/g,m=>m.toUpperCase());
+const nf=v=>Number(v||0).toLocaleString("en-IN");
+const money=v=>`₹ ${Number(v||0).toLocaleString("en-IN",{maximumFractionDigits:2})}`;
+const valueOrZero=v=>Number(v||0);
+
+function toast(text,type="success"){
+  const stack=document.getElementById("toastStack");
+  const t=document.createElement("div");
+  t.className=`toast ${type}`;
+  t.textContent=text;
+  stack.appendChild(t);
+  setTimeout(()=>t.remove(),8000);
+}
+function showMessage(text,type="error",target=messageBox){
+  const old=MESSAGE_TIMERS.get(target); if(old) clearTimeout(old);
+  target.className=`message show ${type}`; target.textContent=text;
+  MESSAGE_TIMERS.set(target,setTimeout(()=>{target.className="message";target.textContent=""},8000));
+}
+function setLoading(v){
+  loginBtn.disabled=v;
+  loginBtn.innerHTML=v?'<span class="ios-login-spinner"></span>':'<span>Login</span>';
+}
+async function sha256(text){
+  const data=new TextEncoder().encode(text);
+  const digest=await crypto.subtle.digest("SHA-256",data);
+  return [...new Uint8Array(digest)].map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+
+function localHHMM(date=new Date()){
+  return `${String(date.getHours()).padStart(2,"0")}:${String(date.getMinutes()).padStart(2,"0")}`;
+}
+function formatClock(value){
+  if(!value) return "—";
+  const [h,m]=String(value).slice(0,5).split(":").map(Number);
+  const d=new Date();
+  d.setHours(h||0,m||0,0,0);
+  return d.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"});
+}
+function getWorkWindowState(){
+  if(!LOCATION_WORK_SCHEDULE || LOCATION_WORK_SCHEDULE.is_enabled===false){
+    return {allowed:true,state:"open",label:"Open",message:"Working hours not restricted"};
+  }
+  const now=localHHMM();
+  const start=String(LOCATION_WORK_SCHEDULE.work_start_time||"00:00").slice(0,5);
+  const end=String(LOCATION_WORK_SCHEDULE.work_end_time||"23:59").slice(0,5);
+
+  if(now < start){
+    return {
+      allowed:false,state:"before",label:"Not Started",
+      message:`Work starts at ${formatClock(start)}`
+    };
+  }
+  if(now > end){
+    return {
+      allowed:false,state:"closed",label:"Ended",
+      message:`Working hours ended at ${formatClock(end)}`
+    };
+  }
+  return {
+    allowed:true,state:"open",label:"Working",
+    message:`${formatClock(start)} – ${formatClock(end)}`
+  };
+}
+function renderWorkHours(){
+  const text=document.getElementById("workHoursText");
+  const status=document.getElementById("workHoursStatus");
+  if(!text||!status)return;
+
+  if(!LOCATION_WORK_SCHEDULE || LOCATION_WORK_SCHEDULE.is_enabled===false){
+    text.textContent="No time restriction";
+    status.textContent="Open";
+    status.className="open";
+    return;
+  }
+
+  const state=getWorkWindowState();
+  text.textContent=`${formatClock(LOCATION_WORK_SCHEDULE.work_start_time)} – ${formatClock(LOCATION_WORK_SCHEDULE.work_end_time)}`;
+  status.textContent=state.label;
+  status.className=state.state;
+}
+async function loadWorkSchedule(){
+  try{
+    const {data,error}=await sb.from("farm_location_working_hours")
+      .select("village_id,work_start_time,work_end_time,is_enabled")
+      .eq("village_id",CURRENT_USER.village_id)
+      .maybeSingle();
+    if(error) throw error;
+    LOCATION_WORK_SCHEDULE=data||null;
+  }catch(err){
+    console.warn("Working hours load failed:",err?.message||err);
+    LOCATION_WORK_SCHEDULE=null;
+  }
+  renderWorkHours();
+}
+function requireWorkingHours(actionLabel="Work"){
+  const state=getWorkWindowState();
+  if(state.allowed) return true;
+  toast(state.message || `${actionLabel} is not available now`,"error");
+  return false;
+}
+function stopWorkClock(reset=false){
+  if(LOGIN_TIMER_ID){
+    clearInterval(LOGIN_TIMER_ID);
+    LOGIN_TIMER_ID=null;
+  }
+  if(reset){
+    SESSION_STARTED_AT=null;
+    const loginEl=document.getElementById("navLoginTime");
+    const durationEl=document.getElementById("navWorkDuration");
+    if(loginEl) loginEl.textContent="—";
+    if(durationEl) durationEl.textContent="00:00:00";
+  }
+}
+
+function formatWorkDuration(startValue,endValue=null){
+  if(!startValue) return "00:00:00";
+  const start=new Date(startValue);
+  const end=endValue ? new Date(endValue) : new Date();
+  const diff=Math.max(0,end.getTime()-start.getTime());
+  const total=Math.floor(diff/1000);
+  const h=Math.floor(total/3600);
+  const m=Math.floor((total%3600)/60);
+  const s=total%60;
+  return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+}
+
+function syncWorkClockFromAttendance(){
+  stopWorkClock(false);
+
+  const loginEl=document.getElementById("navLoginTime");
+  const durationEl=document.getElementById("navWorkDuration");
+  const a=CURRENT_ATTENDANCE;
+
+  // App login itself must NOT start the work timer.
+  if(!a?.check_in){
+    SESSION_STARTED_AT=null;
+    if(loginEl) loginEl.textContent="—";
+    if(durationEl) durationEl.textContent="00:00:00";
+    return;
+  }
+
+  SESSION_STARTED_AT=new Date(a.check_in);
+  if(loginEl){
+    loginEl.textContent=SESSION_STARTED_AT.toLocaleTimeString("en-IN",{
+      hour:"2-digit",
+      minute:"2-digit"
+    });
+  }
+
+  const tick=()=>{
+    const current=CURRENT_ATTENDANCE;
+    if(!current?.check_in){
+      stopWorkClock(true);
+      return;
+    }
+
+    if(durationEl){
+      durationEl.textContent=formatWorkDuration(
+        current.check_in,
+        current.check_out || null
+      );
+    }
+
+    const workedEl=document.getElementById("attendanceWorked");
+    if(workedEl){
+      const end=current.check_out ? new Date(current.check_out) : new Date();
+      const hrs=Math.max(0,(end-new Date(current.check_in))/3600000);
+      workedEl.textContent=hrs.toFixed(2)+" hrs";
+    }
+
+    renderWorkHours();
+
+    // Work Logout stops the timer permanently at checkout duration.
+    if(current.check_out){
+      stopWorkClock(false);
+    }
+  };
+
+  tick();
+
+  if(!a.check_out){
+    LOGIN_TIMER_ID=setInterval(tick,1000);
+  }
+}
+
+function finishBoot(showLogin=false){
+  const boot=document.getElementById("bootScreen");
+  if(showLogin){
+    loginView.classList.remove("hidden");
+    appView.classList.add("hidden");
+  }
+  if(boot){
+    boot.classList.add("hide");
+    setTimeout(()=>boot.remove(),180);
+  }
+}
+
+async function loadVillages(){
+  try{
+    const {data,error}=await sb.from("farm_villages").select("id,name,code,is_active,closed_message").order("name");
+    if(error) throw error;
+    const rows=(data||[]).filter(v=>v.is_active);
+    villageSelect.innerHTML=rows.length?`<option value="">Select Village</option>${rows.map(v=>`<option value="${v.id}">${esc(v.name)}</option>`).join("")}`:'<option value="">No villages available</option>';
+    villageSelect.disabled=!rows.length;
+  }catch{villageSelect.innerHTML='<option value="">Could not load villages</option>';villageSelect.disabled=true}
+}
+eyeBtn.onclick=()=>{
+  const show=passwordInput.type==="password";
+  passwordInput.type=show?"text":"password";
+  eyeBtn.innerHTML=show?'<i class="fa-regular fa-eye-slash"></i>':'<i class="fa-regular fa-eye"></i>';
+};
+async function createLoginSession(user){
+  try{
+    const {data,error}=await sb.from("farm_app_login_sessions").insert({
+      user_id:user.id,login_at:new Date().toISOString(),status:"online",device_info:navigator.userAgent
+    }).select("id").single();
+    return error?null:(data?.id||null);
+  }catch{return null}
+}
+
+loginForm.addEventListener("submit",async e=>{
+  e.preventDefault();
+  const loginId=loginIdInput.value.trim().toLowerCase();
+  const villageId=villageSelect.value;
+  const password=passwordInput.value;
+  if(!loginId||!villageId||!password){showMessage("Enter Login ID, select Village and enter password.");return}
+  setLoading(true);
+  try{
+    const hash=await sha256(password);
+    const {data:user,error}=await sb.from("farm_app_users")
+      .select("id,full_name,mobile,login_id,password_hash,role,village_id,reports_to,is_active")
+      .eq("login_id",loginId).maybeSingle();
+    if(error) throw error;
+    if(!user||user.password_hash!==hash){showMessage("Login ID or password is incorrect.");return}
+    if(!user.is_active){showMessage("Your login is stopped.");return}
+    if(!["manager","supervisor","worker"].includes(user.role)){showMessage("This account is not enabled for this app.");return}
+    if(user.village_id!==villageId){showMessage("This login is not assigned to the selected village.");return}
+
+    const {data:location,error:locErr}=await sb.from("farm_villages").select("id,name,code,is_active,closed_message").eq("id",villageId).maybeSingle();
+    if(locErr) throw locErr;
+    if(!location?.is_active){showMessage(location?.closed_message||"This village is currently stopped.");return}
+
+    CURRENT_SESSION_ID=await createLoginSession(user);
+    CURRENT_USER=user; CURRENT_LOCATION=location;
+    localStorage.setItem("cezonal_staff_session",JSON.stringify({
+      user_id:user.id,
+      role:user.role,
+      village_id:user.village_id,
+      session_id:CURRENT_SESSION_ID
+    }));
+    openMainApp();
+  }catch(err){showMessage(err?.message||"Could not sign in.")}
+  finally{setLoading(false)}
+});
+
+function showRoleElements(){
+  document.querySelectorAll(".manager-only,.supervisor-only,.worker-only").forEach(el=>el.classList.add("hidden"));
+  if(CURRENT_USER.role==="manager")document.querySelectorAll(".manager-only").forEach(el=>el.classList.remove("hidden"));
+  if(CURRENT_USER.role==="supervisor")document.querySelectorAll(".supervisor-only").forEach(el=>el.classList.remove("hidden"));
+  if(CURRENT_USER.role==="worker")document.querySelectorAll(".worker-only").forEach(el=>el.classList.remove("hidden"));
+}
+function openMainApp(){
+  loginView.classList.add("hidden");
+  appView.classList.remove("hidden");
+  finishBoot(false);
+  showRoleElements();
+  document.getElementById("topRoleName").textContent=roleLabel(CURRENT_USER.role);
+  document.getElementById("topLocation").textContent=CURRENT_LOCATION?.name||"—";
+  // Top-right now shows login time + running session duration instead of avatar/profile box.
+  document.getElementById("welcomeName").textContent=`Hi, ${CURRENT_USER.full_name.split(" ")[0]}`;
+  document.getElementById("welcomeSub").textContent=`${roleLabel(CURRENT_USER.role)} · ${CURRENT_LOCATION?.name||""}`;
+  document.getElementById("todayLabel").textContent=new Date().toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"});
+  document.getElementById("entryLocation").value=CURRENT_LOCATION?.name||"";
+
+  if(CURRENT_USER.role==="manager"){
+    document.getElementById("teamQuickText").textContent="Supervisors + Workers";
+    document.getElementById("teamScreenSub").textContent="All supervisors and workers in this location";
+    document.getElementById("activitySub").textContent="Supervisor + Worker updates";
+  }else if(CURRENT_USER.role==="supervisor"){
+    document.getElementById("teamQuickText").textContent="Workers under you";
+    document.getElementById("teamScreenSub").textContent="Workers assigned under you";
+    document.getElementById("activitySub").textContent="Your workers + your entries";
+  }else{
+    document.getElementById("workQuickText").textContent="Assigned work only";
+  }
+
+  bindNavigation();
+  stopWorkClock(true);
+  navigate("home");
+  Promise.allSettled([loadWorkSchedule(),loadAttendance(),loadTeam(),loadAssignments(),loadActivity()]).then(()=>{
+    renderWorkSections(); renderHomeStats(); subscribeRealtime();
+  });
+}
+function bindNavigation(){
+  document.querySelectorAll("[data-go]").forEach(el=>{
+    if(el.dataset.bound)return; el.dataset.bound="1";
+    el.addEventListener("click",()=>navigate(el.dataset.go));
+  });
+}
+function navigate(name){
+  if((name==="work" || name==="entry") && !requireWorkingHours("Work")) return;
+  document.querySelectorAll(".app-screen").forEach(s=>s.classList.remove("active"));
+  document.querySelectorAll(".bottom-item").forEach(b=>b.classList.remove("active"));
+  const map={home:"screenHome",attendance:"screenAttendance",work:"screenWork",entry:"screenEntry",team:"screenTeam",activity:"screenActivity"};
+  document.getElementById(map[name])?.classList.add("active");
+  document.querySelectorAll(`.bottom-item[data-go="${name}"]`).forEach(el=>el.classList.add("active"));
+  if(name==="attendance"){loadAttendance();loadTeamAttendance()}
+  if(name==="team")renderTeam();
+  if(name==="activity")renderActivity();
+  if(name==="work")renderWorkSections();
+}
+async function performLogout(){
+  try{
+    if(CURRENT_SESSION_ID){
+      await sb.from("farm_app_login_sessions").update({
+        logout_at:new Date().toISOString(),
+        status:"logged_out"
+      }).eq("id",CURRENT_SESSION_ID);
+    }
+  }catch{}
+  stopWorkClock(false);
+  stopCamera();
+  if(typeof stopWorkerCamera==="function") stopWorkerCamera();
+  localStorage.removeItem("cezonal_staff_session");
+  location.reload();
+}
+document.getElementById("navLogoutBtn").onclick=performLogout;
+
+/* ---------- ROLE / TEAM ---------- */
+async function loadTeam(){
+  if(CURRENT_USER.role==="worker"){TEAM_CACHE=[];return}
+  try{
+    let q=sb.from("farm_app_users").select("id,full_name,mobile,role,village_id,reports_to,is_active").eq("village_id",CURRENT_USER.village_id).eq("is_active",true);
+    if(CURRENT_USER.role==="manager")q=q.in("role",["supervisor","worker"]);
+    else q=q.eq("role","worker").eq("reports_to",CURRENT_USER.id);
+    const {data,error}=await q.order("role").order("full_name");
+    if(error)throw error;
+    TEAM_CACHE=data||[];
+    renderTeam(); refreshActivityFilters();
+  }catch(err){TEAM_CACHE=[];toast(err.message||"Could not load team","error")}
+}
+function personRow(u,attendance=null){
+  const status=attendance?(attendance.check_out?"Checked out":"Working"):"Not checked in";
+  return `<div class="person-row">
+    <span class="person-avatar">${initials(u.full_name)}</span>
+    <span><b>${esc(u.full_name)}</b><small>${esc(u.mobile||"")} · ${status}</small></span>
+    <span class="role-chip">${esc(roleLabel(u.role))}</span>
+  </div>`;
+}
+function renderTeam(){
+  const host=document.getElementById("teamList"); if(!host)return;
+  const f=document.querySelector(".role-filter.active")?.dataset.roleFilter||"";
+  const rows=f?TEAM_CACHE.filter(x=>x.role===f):TEAM_CACHE;
+  host.innerHTML=rows.length?rows.map(u=>personRow(u)).join(""):'<div class="empty-work"><b>No staff</b><span>No matching staff assigned.</span></div>';
+}
+document.querySelectorAll(".role-filter").forEach(btn=>btn.onclick=()=>{
+  document.querySelectorAll(".role-filter").forEach(x=>x.classList.remove("active")); btn.classList.add("active"); renderTeam();
+});
+
+/* ---------- ASSIGNMENTS + WORK ---------- */
+async function loadAssignments(){
+  try{
+    const {data,error}=await sb.from("farm_work_assignments")
+      .select("id,village_id,user_id,section_key,is_active")
+      .eq("village_id",CURRENT_USER.village_id)
+      .eq("is_active",true);
+    if(error)throw error;
+    ASSIGNMENT_CACHE=data||[];
+  }catch(err){
+    // If assignments table not yet created, Supervisor/Manager still work.
+    ASSIGNMENT_CACHE=[];
+  }
+}
+function allowedSectionKeys(){
+  const all=Object.keys(OPERATION_SECTIONS);
+  if(CURRENT_USER.role==="manager")return all;
+  if(CURRENT_USER.role==="supervisor")return all;
+  return ASSIGNMENT_CACHE.filter(a=>a.user_id===CURRENT_USER.id).map(a=>a.section_key);
+}
+function sectionRoleAction(sectionKey){
+  const c=OPERATION_SECTIONS[sectionKey];
+  if(CURRENT_USER.role==="manager")return c.manager;
+  if(CURRENT_USER.role==="supervisor")return c.supervisor;
+  return "Assigned";
+}
+function renderWorkSections(){
+  const host=document.getElementById("workSectionList"); if(!host)return;
+  const keys=allowedSectionKeys();
+  const groups=[...new Set(keys.map(k=>OPERATION_SECTIONS[k]?.group).filter(Boolean))];
+  const gf=document.getElementById("workGroupFilter");
+  const old=gf.value;
+  gf.innerHTML='<option value="">All Groups</option>'+groups.map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join("");
+  if(groups.includes(old))gf.value=old;
+  const filtered=gf.value?keys.filter(k=>OPERATION_SECTIONS[k]?.group===gf.value):keys;
+  document.getElementById("workCount").textContent=`${filtered.length} sections`;
+
+  if(!filtered.length){
+    host.innerHTML='<div class="empty-work"><b>No work assigned</b><span>Manager can assign work sections to this worker.</span></div>';
+    return;
+  }
+  host.innerHTML=filtered.map(k=>{
+    const s=OPERATION_SECTIONS[k];
+    return `<div class="work-section-card">
+      <div><b>${esc(s.label)}</b><small>${esc(s.group)} · ${esc(sectionRoleAction(k))}</small></div>
+      <button type="button" onclick="openEntry('${k}')">Open</button>
+    </div>`;
+  }).join("");
+}
+document.getElementById("workGroupFilter").onchange=renderWorkSections;
+
+function fieldControl([key,label,type,required],value=""){
+  let control="";
+  if(type==="textarea"){
+    control=`<textarea data-entry-field="${key}" ${required?"required":""}>${esc(value)}</textarea>`;
+  }else if(type==="file"){
+    control=`<input type="file" data-entry-field="${key}" data-entry-type="file" ${required&&!value?"required":""}>`;
+  }else if(type.startsWith("select:")){
+    const opts=type.slice(7).split("|");
+    control=`<select data-entry-field="${key}" ${required?"required":""}><option value="">Select</option>${opts.map(o=>`<option value="${esc(o)}" ${String(value)===o?"selected":""}>${esc(o)}</option>`).join("")}</select>`;
+  }else{
+    control=`<input type="${type}" data-entry-field="${key}" value="${esc(value)}" ${required?"required":""} ${type==="number"?'step="any"':""}>`;
+  }
+  return `<div class="entry-field ${type==="textarea"||type==="file"?"full":""}"><label>${esc(label)}</label>${control}</div>`;
+}
+function openEntry(sectionKey,recordId=""){
+  if(!requireWorkingHours("Work")) return;
+  const cfg=OPERATION_SECTIONS[sectionKey]; if(!cfg)return;
+  const record=recordId?ACTIVITY_CACHE.find(r=>r.id===recordId):null;
+  document.getElementById("entrySectionKey").value=sectionKey;
+  document.getElementById("entryEditId").value=recordId||"";
+  document.getElementById("entryDate").value=record?.record_date||TODAY;
+  document.getElementById("entryTitle").textContent=cfg.label;
+  document.getElementById("entryPermission").textContent=`${roleLabel(CURRENT_USER.role)} · ${sectionRoleAction(sectionKey)}`;
+  document.getElementById("entryFields").innerHTML=cfg.fields.map(f=>fieldControl(f,record?.data?.[f[0]]??"")).join("");
+  document.querySelectorAll("#entryFields [data-entry-field]").forEach(el=>{
+    el.addEventListener("input",previewEntryCalc); el.addEventListener("change",previewEntryCalc);
+  });
+  previewEntryCalc(); navigate("entry");
+}
+window.openEntry=openEntry;
+
+function currentEntryData(){
+  const data={};
+  document.querySelectorAll("#entryFields [data-entry-field]").forEach(el=>{
+    if(el.dataset.entryType==="file")return;
+    data[el.dataset.entryField]=el.type==="number"?(el.value===""?null:Number(el.value)):el.value;
+  });
+  return data;
+}
+function calculateEntry(section,data){
+  if(section==="bird_movement"){
+    const closing=Math.max(valueOrZero(data.opening_birds)+valueOrZero(data.birds_received)+valueOrZero(data.transfer_in)-valueOrZero(data.transfer_out)-valueOrZero(data.mortality)-valueOrZero(data.culling)-valueOrZero(data.sale_removed),0);
+    return {closing_birds:closing,text:`Closing Birds = ${nf(closing)}`};
+  }
+  if(section==="egg_grade"){
+    const total=valueOrZero(data.small)+valueOrZero(data.medium)+valueOrZero(data.large)+valueOrZero(data.xl);
+    return {total_graded:total,text:`Total Graded Eggs = ${nf(total)}`};
+  }
+  if(section==="egg_dispatch"){
+    const bal=Math.max(valueOrZero(data.available_eggs)-valueOrZero(data.eggs_dispatched),0);
+    return {balance_eggs:bal,text:`Balance Eggs = ${nf(bal)}`};
+  }
+  if(section==="feed_stock_check"){
+    const v=valueOrZero(data.physical_stock_kg)-valueOrZero(data.system_stock_kg);
+    return {variance_kg:v,text:`Stock Variance = ${v.toFixed(2)} KG`};
+  }
+  if(section==="electricity"){
+    const u=Math.max(valueOrZero(data.current_meter)-valueOrZero(data.previous_meter),0);
+    return {units_used:u,text:`Electricity Used = ${u.toFixed(2)} units`};
+  }
+  if(section==="purchases"){
+    const total=valueOrZero(data.quantity)*valueOrZero(data.rate);
+    return {total_amount:total,text:`Purchase Total = ${money(total)}`};
+  }
+  if(section==="daily_egg_production"){
+    return {text:`Total Eggs = ${nf(data.total_eggs)} · Good = ${nf(data.good_eggs)} · Broken = ${nf(data.broken_eggs)} · Cracked = ${nf(data.cracked_eggs)}`};
+  }
+  return {text:""};
+}
+function previewEntryCalc(){
+  const key=document.getElementById("entrySectionKey").value;
+  const calc=calculateEntry(key,currentEntryData());
+  const box=document.getElementById("entryAutoResult");
+  if(calc.text){box.textContent=calc.text;box.classList.remove("hidden")}else box.classList.add("hidden");
+}
+async function uploadEntryFile(file,section){
+  const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+  const path=`operations/${CURRENT_USER.village_id}/${CURRENT_USER.id}/${section}/${Date.now()}_${safe}`;
+  const {error}=await sb.storage.from("farm-files").upload(path,file,{upsert:false});
+  if(error)throw error;
+  const {data}=sb.storage.from("farm-files").getPublicUrl(path);
+  return data?.publicUrl||null;
+}
+async function collectEntryData(existing={}){
+  const data={...existing};
+  for(const el of document.querySelectorAll("#entryFields [data-entry-field]")){
+    const key=el.dataset.entryField;
+    if(el.dataset.entryType==="file"){
+      if(el.files?.[0])data[key]=await uploadEntryFile(el.files[0],document.getElementById("entrySectionKey").value);
+    }else data[key]=el.type==="number"?(el.value===""?null:Number(el.value)):el.value;
+  }
+  return data;
+}
+document.getElementById("workEntryForm").onsubmit=async e=>{
+  e.preventDefault();
+  if(!requireWorkingHours("Work")) return;
+  const btn=document.getElementById("saveEntryBtn");
+  btn.disabled=true; btn.innerHTML='<span class="ios-login-spinner"></span>';
+  try{
+    const section=document.getElementById("entrySectionKey").value;
+    const id=document.getElementById("entryEditId").value;
+    const old=id?ACTIVITY_CACHE.find(r=>r.id===id):null;
+    const data=await collectEntryData(old?.data||{});
+    const calculated=calculateEntry(section,data);
+
+    let status="draft";
+    if(section==="day_closing"&&data.confirm_complete==="Yes")status="submitted";
+    if(section==="lab_result")status="submitted";
+
+    const payload={
+      village_id:CURRENT_USER.village_id,
+      section_key:section,
+      record_date:document.getElementById("entryDate").value,
+      data,calculated,
+      status:id?(old?.status||status):status,
+      created_by:CURRENT_USER.id,
+      created_by_name:CURRENT_USER.full_name,
+      created_by_role:CURRENT_USER.role,
+      updated_at:new Date().toISOString()
+    };
+    let res;
+    if(id)res=await sb.from("farm_operational_records").update(payload).eq("id",id).select().single();
+    else res=await sb.from("farm_operational_records").insert(payload).select().single();
+    if(res.error)throw res.error;
+    if(id){
+      const i=ACTIVITY_CACHE.findIndex(x=>x.id===id); if(i>=0)ACTIVITY_CACHE[i]=res.data;
+    }else ACTIVITY_CACHE.unshift(res.data);
+    renderHomeStats(); renderActivity(); renderActivityMini();
+    toast(id?"Updated successfully":"Saved successfully","success");
+    navigate("work");
+  }catch(err){toast(err.message||"Could not save","error")}
+  finally{btn.disabled=false;btn.textContent="Save"}
+};
+
+/* ---------- ACTIVITY / MANAGER VISIBILITY ---------- */
+async function loadActivity(){
+  try{
+    let q=sb.from("farm_operational_records")
+      .select("id,village_id,section_key,record_date,data,calculated,status,created_by,created_by_name,created_by_role,created_at,updated_at")
+      .eq("village_id",CURRENT_USER.village_id)
+      .order("updated_at",{ascending:false})
+      .limit(500);
+
+    const {data,error}=await q;
+    if(error)throw error;
+    let rows=data||[];
+
+    if(CURRENT_USER.role==="supervisor"){
+      const allowedIds=new Set([CURRENT_USER.id,...TEAM_CACHE.map(x=>x.id)]);
+      rows=rows.filter(r=>allowedIds.has(r.created_by));
+    }else if(CURRENT_USER.role==="worker"){
+      rows=rows.filter(r=>r.created_by===CURRENT_USER.id);
+    }
+    ACTIVITY_CACHE=rows;
+    renderActivity();renderActivityMini();renderHomeStats();refreshActivityFilters();
+  }catch(err){ACTIVITY_CACHE=[];renderActivity();}
+}
+function refreshActivityFilters(){
+  const u=document.getElementById("activityUserFilter");
+  const s=document.getElementById("activitySectionFilter");
+  if(!u||!s)return;
+  const users=[CURRENT_USER,...TEAM_CACHE];
+  const oldU=u.value,oldS=s.value;
+  u.innerHTML='<option value="">All Staff</option>'+users.map(x=>`<option value="${x.id}">${esc(x.full_name)}</option>`).join("");
+  const keys=[...new Set(ACTIVITY_CACHE.map(x=>x.section_key))];
+  s.innerHTML='<option value="">All Sections</option>'+keys.map(k=>`<option value="${k}">${esc(OPERATION_SECTIONS[k]?.label||k)}</option>`).join("");
+  u.value=oldU;s.value=oldS;
+}
+function activityItem(r){
+  const cfg=OPERATION_SECTIONS[r.section_key];
+  const created=niceDateTime(r.created_at);
+  const updated=niceDateTime(r.updated_at);
+  return `<div class="activity-item" onclick="openRecord('${r.id}')">
+    <div class="activity-item-top">
+      <div>
+        <b>${esc(cfg?.label||r.section_key)}</b>
+        <small>${esc(r.created_by_name||"Staff")} · ${esc(roleLabel(r.created_by_role||""))}</small>
+      </div>
+      <span class="activity-status">${esc(r.status||"draft")}</span>
+    </div>
+    <div class="activity-time-line">
+      <span>Added ${esc(created)}</span>
+      <span>Updated ${esc(updated)}</span>
+    </div>
+    <div class="activity-meta">${esc(r.calculated?.text||"Saved")}</div>
+  </div>`;
+}
+function renderActivity(){
+  const host=document.getElementById("activityList"); if(!host)return;
+  const uf=document.getElementById("activityUserFilter")?.value||"";
+  const sf=document.getElementById("activitySectionFilter")?.value||"";
+  const rows=ACTIVITY_CACHE.filter(r=>(!uf||r.created_by===uf)&&(!sf||r.section_key===sf));
+  host.innerHTML=rows.length?rows.map(activityItem).join(""):'<div class="empty-work"><b>No activity</b><span>No updates yet.</span></div>';
+}
+function renderActivityMini(){
+  const host=document.getElementById("activityMini"); if(!host)return;
+  host.innerHTML=ACTIVITY_CACHE.length?ACTIVITY_CACHE.slice(0,5).map(activityItem).join(""):'<div class="person-row"><span></span><span><b>No activity yet</b></span><span></span></div>';
+}
+document.getElementById("activityUserFilter").onchange=renderActivity;
+document.getElementById("activitySectionFilter").onchange=renderActivity;
+
+function prettyKey(key){
+  return String(key||"")
+    .replaceAll("_"," ")
+    .replace(/\b\w/g,m=>m.toUpperCase());
+}
+
+function formatRecordValue(value){
+  if(value===null || value===undefined || value==="") return "—";
+  if(typeof value==="boolean") return value ? "Yes" : "No";
+  if(typeof value==="number") return value.toLocaleString("en-IN",{maximumFractionDigits:2});
+  if(typeof value==="string" && /^https?:\/\//i.test(value)){
+    return `<a href="${esc(value)}" target="_blank" rel="noopener">Open file / proof</a>`;
+  }
+  return esc(value);
+}
+
+function openRecord(id){
+  const r=ACTIVITY_CACHE.find(x=>x.id===id); if(!r)return;
+  const cfg=OPERATION_SECTIONS[r.section_key];
+  document.getElementById("entryActionTitle").textContent=cfg?.label||r.section_key;
+
+  const details=Object.entries(r.data||{})
+    .filter(([,v])=>v!==null && v!=="" && typeof v!=="object");
+
+  let actions="";
+  if(CURRENT_USER.role==="manager"){
+    actions=`<div class="record-actions">
+      <button class="edit" onclick="closeRecord();openEntry('${r.section_key}','${r.id}')">Edit</button>
+      <button class="approve" onclick="setRecordStatus('${r.id}','approved')">Approve</button>
+      <button class="reopen" onclick="setRecordStatus('${r.id}','reopened')">Reopen</button>
+    </div>`;
+  }else if(CURRENT_USER.role==="supervisor" && r.created_by===CURRENT_USER.id){
+    actions=`<div class="record-actions">
+      <button class="edit" onclick="closeRecord();openEntry('${r.section_key}','${r.id}')">Edit</button>
+    </div>`;
+  }else if(CURRENT_USER.role==="worker" && r.created_by===CURRENT_USER.id){
+    actions=`<div class="record-actions">
+      <button class="edit" onclick="closeRecord();openEntry('${r.section_key}','${r.id}')">Edit</button>
+    </div>`;
+  }
+
+  document.getElementById("entryActionBody").innerHTML=`
+    <div class="record-audit-box">
+      <div class="record-audit-row">
+        <span>Added By</span>
+        <b>${esc(r.created_by_name||"—")}</b>
+      </div>
+      <div class="record-audit-row">
+        <span>Role</span>
+        <b>${esc(roleLabel(r.created_by_role||""))}</b>
+      </div>
+      <div class="record-audit-row">
+        <span>Entry Date</span>
+        <b>${esc(r.record_date||"—")}</b>
+      </div>
+      <div class="record-audit-row">
+        <span>Added At</span>
+        <b>${esc(niceDateTime(r.created_at))}</b>
+      </div>
+      <div class="record-audit-row">
+        <span>Last Updated</span>
+        <b>${esc(niceDateTime(r.updated_at))}</b>
+      </div>
+      <div class="record-audit-row">
+        <span>Status</span>
+        <b>${esc(r.status||"draft")}</b>
+      </div>
+    </div>
+
+    <div class="record-values-title">Entered Details</div>
+    <div class="record-values-list">
+      ${details.length ? details.map(([k,v])=>`
+        <div class="record-value-box">
+          <span>${esc(prettyKey(k))}</span>
+          <b>${formatRecordValue(v)}</b>
+        </div>`).join("") :
+        `<div class="record-value-box"><span>Details</span><b>—</b></div>`}
+    </div>
+
+    ${r.calculated?.text ? `
+      <div class="record-calc-box">
+        <span>Automatic Result</span>
+        <b>${esc(r.calculated.text)}</b>
+      </div>` : ""}
+
+    ${actions}`;
+  document.getElementById("entryActionModal").classList.remove("hidden");
+}
+window.openRecord=openRecord;
+function closeRecord(){document.getElementById("entryActionModal").classList.add("hidden")}
+window.closeRecord=closeRecord;
+document.getElementById("entryActionClose").onclick=closeRecord;
+async function setRecordStatus(id,status){
+  try{
+    const {data,error}=await sb.from("farm_operational_records").update({
+      status,approved_by:CURRENT_USER.id,approved_at:status==="approved"?new Date().toISOString():null,updated_at:new Date().toISOString()
+    }).eq("id",id).select().single();
+    if(error)throw error;
+    const i=ACTIVITY_CACHE.findIndex(x=>x.id===id); if(i>=0)ACTIVITY_CACHE[i]=data;
+    closeRecord();renderActivity();renderActivityMini();toast(`Record ${status}`,"success");
+  }catch(err){toast(err.message||"Could not update","error")}
+}
+window.setRecordStatus=setRecordStatus;
+
+/* ---------- ATTENDANCE: LOCATION FIRST, FACE SECOND ---------- */
+async function loadAttendance(){
+  try{
+    const {data,error}=await sb.from("farm_staff_attendance")
+      .select("id,attendance_date,user_id,check_in,check_out,status,face_photo_url,latitude,longitude,location_accuracy")
+      .eq("user_id",CURRENT_USER.id).eq("attendance_date",TODAY).maybeSingle();
+    if(error)throw error;
+    CURRENT_ATTENDANCE=data||null;
+    renderAttendanceStatus();
+  }catch(err){CURRENT_ATTENDANCE=null;renderAttendanceStatus()}
+}
+function renderAttendanceStatus(){
+  const a=CURRENT_ATTENDANCE;
+  document.getElementById("attendanceStatus").textContent=!a?"Not checked in":a.check_out?"Completed":"Working";
+  document.getElementById("attendanceCheckIn").textContent=niceTime(a?.check_in);
+  document.getElementById("attendanceCheckOut").textContent=niceTime(a?.check_out);
+
+  let hrs=0;
+  if(a?.check_in){
+    const end=a.check_out?new Date(a.check_out):new Date();
+    hrs=Math.max(0,(end-new Date(a.check_in))/3600000);
+  }
+
+  document.getElementById("attendanceWorked").textContent=hrs.toFixed(2)+" hrs";
+  document.getElementById("statAttendance").textContent=!a?"Pending":a.check_out?"Completed":"Working";
+  document.getElementById("attendanceQuickText").textContent=!a?"Location first, then face":a.check_out?"Work completed":"Working now";
+
+  if(a){
+    document.getElementById("locationStep").classList.add("hidden");
+    document.getElementById("faceStep").classList.remove("hidden");
+    document.getElementById("checkInBtn").classList.add("hidden");
+    document.getElementById("checkOutBtn").classList.toggle("hidden",!!a.check_out);
+  }else{
+    document.getElementById("locationStep").classList.remove("hidden");
+    document.getElementById("faceStep").classList.add("hidden");
+    document.getElementById("checkInBtn").classList.remove("hidden");
+    document.getElementById("checkOutBtn").classList.add("hidden");
+  }
+
+  // Work timer is always based on attendance check-in/check-out,
+  // never on app sign-in.
+  syncWorkClockFromAttendance();
+}
+document.getElementById("getLocationBtn").onclick=()=>{
+  if(!requireWorkingHours("Attendance")) return;
+  if(!navigator.geolocation){toast("Location is not supported","error");return}
+  const btn=document.getElementById("getLocationBtn");btn.disabled=true;btn.innerHTML='<span class="ios-login-spinner"></span>';
+  navigator.geolocation.getCurrentPosition(pos=>{
+    GEO={latitude:pos.coords.latitude,longitude:pos.coords.longitude,accuracy:pos.coords.accuracy};
+    document.getElementById("locationStep").classList.add("hidden");
+    document.getElementById("faceStep").classList.remove("hidden");
+    document.getElementById("attendanceVerified").classList.remove("hidden");
+    document.getElementById("verifiedLocationText").textContent=`Current location captured · ±${Math.round(GEO.accuracy)}m`;
+    btn.disabled=false;btn.textContent="Use Current Location";
+  },()=>{
+    btn.disabled=false;btn.textContent="Use Current Location";
+    showMessage("Live location permission is required.","error",document.getElementById("attendanceMessage"));
+  },{enableHighAccuracy:true,timeout:12000,maximumAge:0});
+};
+async function startCamera(){
+  try{
+    stopCamera();
+    CAMERA_STREAM=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user"},audio:false});
+    document.getElementById("cameraVideo").srcObject=CAMERA_STREAM;
+    document.getElementById("cameraWrap").classList.remove("hidden");
+    document.getElementById("facePreview").classList.add("hidden");
+    document.getElementById("cameraVideo").classList.remove("hidden");
+    document.getElementById("captureFaceBtn").classList.remove("hidden");
+    document.getElementById("retakeFaceBtn").classList.add("hidden");
+    FACE_BLOB=null;document.getElementById("checkInBtn").disabled=true;
+  }catch{showMessage("Camera permission is required.","error",document.getElementById("attendanceMessage"))}
+}
+function stopCamera(){if(CAMERA_STREAM){CAMERA_STREAM.getTracks().forEach(t=>t.stop());CAMERA_STREAM=null}}
+document.getElementById("startCameraBtn").onclick=startCamera;
+document.getElementById("retakeFaceBtn").onclick=startCamera;
+document.getElementById("captureFaceBtn").onclick=()=>{
+  const video=document.getElementById("cameraVideo"),canvas=document.getElementById("cameraCanvas");
+  canvas.width=video.videoWidth||640;canvas.height=video.videoHeight||480;
+  canvas.getContext("2d").drawImage(video,0,0,canvas.width,canvas.height);
+  canvas.toBlob(blob=>{
+    FACE_BLOB=blob;document.getElementById("facePreview").src=URL.createObjectURL(blob);
+    document.getElementById("facePreview").classList.remove("hidden");document.getElementById("cameraVideo").classList.add("hidden");
+    document.getElementById("captureFaceBtn").classList.add("hidden");document.getElementById("retakeFaceBtn").classList.remove("hidden");
+    document.getElementById("checkInBtn").disabled=false;stopCamera();
+  },"image/jpeg",.82);
+};
+async function uploadFace(){
+  const path=`attendance/${CURRENT_USER.village_id}/${CURRENT_USER.id}/${TODAY}_${Date.now()}.jpg`;
+  const {error}=await sb.storage.from("farm-files").upload(path,FACE_BLOB,{contentType:"image/jpeg",upsert:false});
+  if(error)throw error;
+  return sb.storage.from("farm-files").getPublicUrl(path).data?.publicUrl||null;
+}
+document.getElementById("checkInBtn").onclick=async()=>{
+  if(!requireWorkingHours("Attendance")) return;
+  if(!GEO||!FACE_BLOB)return;
+  const btn=document.getElementById("checkInBtn");btn.disabled=true;btn.innerHTML='<span class="ios-login-spinner"></span>';
+  try{
+    const face=await uploadFace();
+    const {data,error}=await sb.from("farm_staff_attendance").upsert({
+      attendance_date:TODAY,user_id:CURRENT_USER.id,check_in:new Date().toISOString(),status:"present",
+      face_photo_url:face,latitude:GEO.latitude,longitude:GEO.longitude,location_accuracy:GEO.accuracy
+    },{onConflict:"attendance_date,user_id"}).select().single();
+    if(error)throw error;
+    CURRENT_ATTENDANCE=data;
+    renderAttendanceStatus();
+    toast("Work login marked","success");
+    loadTeamAttendance();
+  }catch(err){toast(err.message||"Could not mark work login","error")}
+  finally{btn.disabled=false;btn.textContent="Work Login"}
+};
+document.getElementById("checkOutBtn").onclick=async()=>{
+  const btn=document.getElementById("checkOutBtn");btn.disabled=true;btn.innerHTML='<span class="ios-login-spinner"></span>';
+  try{
+    const {data,error}=await sb.from("farm_staff_attendance").update({check_out:new Date().toISOString()}).eq("id",CURRENT_ATTENDANCE.id).select().single();
+    if(error)throw error;
+    CURRENT_ATTENDANCE=data;
+    renderAttendanceStatus();
+    toast("Work logout marked","success");
+    loadTeamAttendance();
+  }catch(err){toast(err.message||"Could not mark work logout","error")}
+  finally{btn.disabled=false;btn.textContent="Work Logout"}
+};
+async function loadTeamAttendance(){
+  if(!["manager","supervisor"].includes(CURRENT_USER?.role))return;
+  const ids=TEAM_CACHE.map(x=>x.id);
+  const host=document.getElementById("teamAttendanceList");
+  if(!ids.length){host.innerHTML='<div class="person-row"><span></span><span><b>No staff assigned</b></span><span></span></div>';return}
+  try{
+    const {data,error}=await sb.from("farm_staff_attendance").select("user_id,check_in,check_out,status,marked_by").eq("attendance_date",TODAY).in("user_id",ids);
+    if(error)throw error;
+    const map=Object.fromEntries((data||[]).map(x=>[x.user_id,x]));
+    document.getElementById("statTeamPresent").textContent=(data||[]).filter(x=>x.check_in&&!x.check_out).length;
+
+    host.innerHTML=TEAM_CACHE.map(u=>{
+      const a=map[u.id]||null;
+      const base=personRow(u,a);
+      if(CURRENT_USER.role!=="supervisor" || u.role!=="worker" || a) return base;
+      return `<div class="person-row">
+        <span class="person-avatar">${initials(u.full_name)}</span>
+        <span><b>${esc(u.full_name)}</b><small>${esc(u.mobile||"")} · Not checked in</small></span>
+        <button class="secondary-action" style="height:30px;padding:0 9px" onclick="openWorkerAttendance('${u.id}')">Mark</button>
+      </div>`;
+    }).join("");
+  }catch{host.innerHTML='<div class="person-row"><span></span><span><b>Could not load attendance</b></span><span></span></div>'}
+}
+
+function renderDailyFarmSummary(){
+  const todayRows=ACTIVITY_CACHE.filter(r=>r.record_date===TODAY);
+
+  const num=v=>{
+    const n=Number(v);
+    return Number.isFinite(n)?n:0;
+  };
+  const rowsFor=key=>todayRows.filter(r=>r.section_key===key);
+
+  // Bird summary: use the latest bird movement for closing hens,
+  // while today's sold/mortality values are accumulated.
+  const birdRows=rowsFor("bird_movement");
+  const latestBird=birdRows.slice().sort((a,b)=>
+    new Date(b.updated_at||b.created_at||0)-new Date(a.updated_at||a.created_at||0)
+  )[0];
+
+  const closing=latestBird ? num(latestBird.calculated?.closing_birds) : 0;
+  const sold=birdRows.reduce((t,r)=>t+num(r.data?.sale_removed),0);
+  const mortality=birdRows.reduce((t,r)=>t+num(r.data?.mortality),0);
+
+  const eggRows=rowsFor("daily_egg_production");
+  const eggs=eggRows.reduce((t,r)=>t+num(r.data?.total_eggs),0);
+  const goodEggs=eggRows.reduce((t,r)=>t+num(r.data?.good_eggs),0);
+
+  const feedRows=rowsFor("feed_consumption");
+  const feed=feedRows.reduce((t,r)=>t+num(r.data?.quantity_kg),0);
+
+  const set=(id,value)=>{
+    const el=document.getElementById(id);
+    if(el) el.textContent=value;
+  };
+
+  set("sumClosingBirds",nf(closing));
+  set("sumSoldBirds",nf(sold));
+  set("sumMortality",nf(mortality));
+  set("sumEggs",nf(eggs));
+  set("sumGoodEggs",nf(goodEggs));
+  set("sumFeed",`${feed.toLocaleString(undefined,{maximumFractionDigits:2})} KG`);
+}
+
+function renderHomeStats(){
+  document.getElementById("statTotalStaff").textContent=TEAM_CACHE.length;
+  document.getElementById("statPendingWork").textContent=ACTIVITY_CACHE.filter(r=>r.record_date===TODAY).length;
+  renderDailyFarmSummary();
+  loadTeamAttendance();
+}
+
+
+/* ---------- SUPERVISOR MARKS WORKER ATTENDANCE ---------- */
+function stopWorkerCamera(){
+  if(WORKER_CAMERA_STREAM){
+    WORKER_CAMERA_STREAM.getTracks().forEach(t=>t.stop());
+    WORKER_CAMERA_STREAM=null;
+  }
+}
+function resetWorkerAttendanceModal(){
+  WORKER_FACE_BLOB=null;WORKER_GEO=null;stopWorkerCamera();
+  document.getElementById("workerGeoStep").classList.remove("hidden");
+  document.getElementById("workerFaceStep").classList.add("hidden");
+  document.getElementById("workerCameraWrap").classList.add("hidden");
+  document.getElementById("workerFacePreview").classList.add("hidden");
+  document.getElementById("workerCameraVideo").classList.remove("hidden");
+  document.getElementById("workerCaptureBtn").classList.remove("hidden");
+  document.getElementById("workerRetakeBtn").classList.add("hidden");
+  document.getElementById("saveWorkerAttendanceBtn").disabled=true;
+}
+function openWorkerAttendance(userId=""){
+  if(CURRENT_USER.role!=="supervisor")return;
+  if(!requireWorkingHours("Attendance")) return;
+  const select=document.getElementById("workerAttendanceUser");
+  const workers=TEAM_CACHE.filter(x=>x.role==="worker");
+  select.innerHTML=workers.map(w=>`<option value="${w.id}">${esc(w.full_name)}</option>`).join("");
+  if(userId)select.value=userId;
+  resetWorkerAttendanceModal();
+  document.getElementById("workerAttendanceModal").classList.remove("hidden");
+}
+window.openWorkerAttendance=openWorkerAttendance;
+
+document.getElementById("markWorkerAttendanceBtn").onclick=()=>openWorkerAttendance();
+document.getElementById("workerAttendanceClose").onclick=()=>{
+  stopWorkerCamera();
+  document.getElementById("workerAttendanceModal").classList.add("hidden");
+};
+
+document.getElementById("workerGeoBtn").onclick=()=>{
+  const btn=document.getElementById("workerGeoBtn");
+  btn.disabled=true;btn.innerHTML='<span class="ios-login-spinner"></span>';
+  navigator.geolocation.getCurrentPosition(pos=>{
+    WORKER_GEO={latitude:pos.coords.latitude,longitude:pos.coords.longitude,accuracy:pos.coords.accuracy};
+    document.getElementById("workerGeoStep").classList.add("hidden");
+    document.getElementById("workerFaceStep").classList.remove("hidden");
+    btn.disabled=false;btn.textContent="Use Current Location";
+  },()=>{
+    btn.disabled=false;btn.textContent="Use Current Location";
+    toast("Live location permission is required","error");
+  },{enableHighAccuracy:true,timeout:12000,maximumAge:0});
+};
+
+async function startWorkerCamera(){
+  try{
+    stopWorkerCamera();
+    WORKER_CAMERA_STREAM=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}},audio:false});
+    document.getElementById("workerCameraVideo").srcObject=WORKER_CAMERA_STREAM;
+    document.getElementById("workerCameraWrap").classList.remove("hidden");
+    document.getElementById("workerFacePreview").classList.add("hidden");
+    document.getElementById("workerCameraVideo").classList.remove("hidden");
+    document.getElementById("workerCaptureBtn").classList.remove("hidden");
+    document.getElementById("workerRetakeBtn").classList.add("hidden");
+    WORKER_FACE_BLOB=null;
+    document.getElementById("saveWorkerAttendanceBtn").disabled=true;
+  }catch{
+    toast("Back camera permission is required","error");
+  }
+}
+document.getElementById("workerCameraBtn").onclick=startWorkerCamera;
+document.getElementById("workerRetakeBtn").onclick=startWorkerCamera;
+document.getElementById("workerCaptureBtn").onclick=()=>{
+  const video=document.getElementById("workerCameraVideo");
+  const canvas=document.getElementById("workerCameraCanvas");
+  canvas.width=video.videoWidth||640;canvas.height=video.videoHeight||480;
+  canvas.getContext("2d").drawImage(video,0,0,canvas.width,canvas.height);
+  canvas.toBlob(blob=>{
+    WORKER_FACE_BLOB=blob;
+    document.getElementById("workerFacePreview").src=URL.createObjectURL(blob);
+    document.getElementById("workerFacePreview").classList.remove("hidden");
+    document.getElementById("workerCameraVideo").classList.add("hidden");
+    document.getElementById("workerCaptureBtn").classList.add("hidden");
+    document.getElementById("workerRetakeBtn").classList.remove("hidden");
+    document.getElementById("saveWorkerAttendanceBtn").disabled=false;
+    stopWorkerCamera();
+  },"image/jpeg",.82);
+};
+
+async function uploadWorkerFace(workerId){
+  const path=`attendance/${CURRENT_USER.village_id}/${workerId}/${TODAY}_${Date.now()}_supervisor.jpg`;
+  const {error}=await sb.storage.from("farm-files").upload(path,WORKER_FACE_BLOB,{contentType:"image/jpeg",upsert:false});
+  if(error)throw error;
+  return sb.storage.from("farm-files").getPublicUrl(path).data?.publicUrl||null;
+}
+document.getElementById("saveWorkerAttendanceBtn").onclick=async()=>{
+  const workerId=document.getElementById("workerAttendanceUser").value;
+  if(!workerId||!WORKER_GEO||!WORKER_FACE_BLOB)return;
+  const btn=document.getElementById("saveWorkerAttendanceBtn");
+  btn.disabled=true;btn.innerHTML='<span class="ios-login-spinner"></span>';
+  try{
+    const face=await uploadWorkerFace(workerId);
+    const {error}=await sb.from("farm_staff_attendance").upsert({
+      attendance_date:TODAY,user_id:workerId,check_in:new Date().toISOString(),status:"present",
+      face_photo_url:face,latitude:WORKER_GEO.latitude,longitude:WORKER_GEO.longitude,
+      location_accuracy:WORKER_GEO.accuracy,marked_by:CURRENT_USER.id,attendance_source:"supervisor"
+    },{onConflict:"attendance_date,user_id"});
+    if(error)throw error;
+    document.getElementById("workerAttendanceModal").classList.add("hidden");
+    toast("Worker attendance marked","success");
+    loadTeamAttendance();
+  }catch(err){
+    toast(err.message||"Could not mark worker attendance","error");
+  }finally{
+    btn.disabled=false;btn.textContent="Mark Present";
+  }
+};
+
+
+/* ---------- REALTIME: targeted, no reload / no blink ---------- */
+function subscribeRealtime(){
+  if(REALTIME_CHANNEL)sb.removeChannel(REALTIME_CHANNEL);
+  REALTIME_CHANNEL=sb.channel("staff-live-"+CURRENT_USER.id)
+    .on("postgres_changes",{event:"*",schema:"public",table:"farm_operational_records",filter:`village_id=eq.${CURRENT_USER.village_id}`},()=>loadActivity())
+    .on("postgres_changes",{event:"*",schema:"public",table:"farm_staff_attendance"},()=>{loadAttendance();loadTeamAttendance()})
+    .on("postgres_changes",{event:"*",schema:"public",table:"farm_work_assignments",filter:`village_id=eq.${CURRENT_USER.village_id}`},()=>{loadAssignments().then(renderWorkSections)})
+    .on("postgres_changes",{event:"*",schema:"public",table:"farm_location_working_hours",filter:`village_id=eq.${CURRENT_USER.village_id}`},()=>loadWorkSchedule())
+    .subscribe();
+}
+
+/* ---------- RESTORE ---------- */
+async function restoreSession(){
+  try{
+    await loadVillages();
+
+    const raw=localStorage.getItem("cezonal_staff_session");
+    if(!raw){
+      finishBoot(true);
+      return;
+    }
+
+    let saved;
+    try{
+      saved=JSON.parse(raw);
+    }catch{
+      localStorage.removeItem("cezonal_staff_session");
+      finishBoot(true);
+      return;
+    }
+
+    const {data:user,error}=await sb.from("farm_app_users")
+      .select("id,full_name,mobile,login_id,role,village_id,reports_to,is_active")
+      .eq("id",saved.user_id)
+      .maybeSingle();
+
+    if(error || !user?.is_active || !["manager","supervisor","worker"].includes(user.role)){
+      localStorage.removeItem("cezonal_staff_session");
+      finishBoot(true);
+      return;
+    }
+
+    const {data:loc,error:locError}=await sb.from("farm_villages")
+      .select("id,name,code,is_active")
+      .eq("id",user.village_id)
+      .maybeSingle();
+
+    if(locError || !loc?.is_active){
+      localStorage.removeItem("cezonal_staff_session");
+      finishBoot(true);
+      return;
+    }
+
+    CURRENT_USER=user;
+    CURRENT_LOCATION=loc;
+    CURRENT_SESSION_ID=saved.session_id||null;
+
+    openMainApp();
+
+  }catch(err){
+    console.warn("Session restore failed:",err);
+    localStorage.removeItem("cezonal_staff_session");
+    finishBoot(true);
+  }
+}
+
+setTimeout(()=>{
+  const boot=document.getElementById("bootScreen");
+  if(boot && document.body.contains(boot)){
+    if(appView.classList.contains("hidden")){
+      finishBoot(true);
+    }else{
+      finishBoot(false);
+    }
+  }
+},6500);
+
+restoreSession();
+
+function syncEntryFileName(input){
+  if(!input) return;
+  const box=input.closest(".entry-file-wrap");
+  const nameEl=box ? box.querySelector(".entry-file-name") : null;
+  if(!nameEl) return;
+  const file=input.files && input.files[0];
+  nameEl.textContent=file ? file.name : "No file chosen";
+  nameEl.classList.toggle("has-file",!!file);
+}
+
+function applyMatchedFileChooser(root=document){
+  root.querySelectorAll('#entryFields input[type="file"]:not([data-custom-file-ready])').forEach((input,index)=>{
+    input.dataset.customFileReady="1";
+    input.classList.add("entry-file-native");
+    if(!input.id) input.id="entryFile_"+Date.now()+"_"+index;
+
+    const wrap=document.createElement("div");
+    wrap.className="entry-file-wrap";
+
+    const choose=document.createElement("label");
+    choose.className="entry-file-btn";
+    choose.htmlFor=input.id;
+    choose.innerHTML='<i class="fa-solid fa-arrow-up-from-bracket"></i><span>Choose file</span>';
+
+    const fileName=document.createElement("div");
+    fileName.className="entry-file-name";
+    fileName.textContent=(input.files&&input.files[0]) ? input.files[0].name : "No file chosen";
+    if(input.files&&input.files[0]) fileName.classList.add("has-file");
+
+    input.parentNode.insertBefore(wrap,input);
+    wrap.appendChild(input);
+    wrap.appendChild(choose);
+    wrap.appendChild(fileName);
+    input.addEventListener("change",()=>syncEntryFileName(input));
+  });
+}
+
+const entryFieldsFileRoot=document.getElementById("entryFields");
+if(entryFieldsFileRoot){
+  new MutationObserver(()=>applyMatchedFileChooser(entryFieldsFileRoot))
+    .observe(entryFieldsFileRoot,{childList:true,subtree:true});
+  applyMatchedFileChooser(entryFieldsFileRoot);
+}
+
+</script>
+
+</body>
+</html>
