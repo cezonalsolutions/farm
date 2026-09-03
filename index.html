@@ -7,6 +7,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 :root{
@@ -635,6 +636,204 @@ body{
   }
 }
 
+
+/* ===== Poultry Farmer simple login UI override ===== */
+.login-page{
+  position:relative!important;
+  width:100%!important;
+  min-height:100dvh!important;
+  height:100dvh!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  grid-template-columns:none!important;
+  grid-template-rows:none!important;
+  overflow:hidden!important;
+  padding:
+    calc(24px + env(safe-area-inset-top))
+    24px
+    calc(24px + env(safe-area-inset-bottom))!important;
+  background:#fff!important;
+  font-family:"Inter",ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+}
+.login-page.hidden{display:none!important}
+
+.login-simple-wrap{
+  position:relative;
+  z-index:2;
+  width:100%;
+  max-width:380px;
+}
+
+.login-brand-title{
+  display:flex;
+  align-items:baseline;
+  justify-content:center;
+  gap:8px;
+  white-space:nowrap;
+}
+.login-poultry{
+  font-family:"Inter",sans-serif;
+  font-size:31px;
+  line-height:1;
+  font-weight:800;
+  letter-spacing:-1.7px;
+  color:#171917;
+}
+.login-farmer{
+  font-family:"Caveat",cursive;
+  font-size:40px;
+  line-height:1;
+  font-weight:700;
+  letter-spacing:-1px;
+  color:#397345;
+}
+.login-subtitle{
+  margin:8px 0 39px;
+  text-align:center;
+  color:#8b918b;
+  font-size:13px;
+  line-height:1.6;
+}
+.login-simple-wrap #loginForm{
+  width:100%!important;
+  max-width:none!important;
+}
+.login-simple-wrap .field{
+  margin-bottom:24px!important;
+}
+.login-simple-wrap .field label{
+  display:block!important;
+  margin-bottom:8px!important;
+  color:#727772!important;
+  font-size:11px!important;
+  font-weight:700!important;
+  letter-spacing:.7px!important;
+  text-transform:uppercase!important;
+}
+.login-simple-wrap .input.login-line-input{
+  position:relative;
+  height:48px!important;
+  display:flex!important;
+  align-items:center!important;
+  border:0!important;
+  border-bottom:1px solid #dadeda!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  transition:border-color .2s ease!important;
+}
+.login-simple-wrap .input.login-line-input:focus-within{
+  border-bottom-color:#397345!important;
+  box-shadow:none!important;
+}
+.login-simple-wrap .input.login-line-input>i:first-child{
+  width:30px!important;
+  flex:0 0 30px;
+  text-align:left!important;
+  color:#9ca29c!important;
+  font-size:14px!important;
+}
+.login-simple-wrap .input input,
+.login-simple-wrap .input select{
+  width:100%!important;
+  height:48px!important;
+  border:0!important;
+  outline:0!important;
+  background:transparent!important;
+  color:#171917!important;
+  padding:0 34px 0 0!important;
+  font-family:"Inter",sans-serif!important;
+  font-size:15px!important;
+}
+.login-simple-wrap .input input::placeholder{color:#b7bbb7!important}
+.login-simple-wrap .input select{
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  cursor:pointer;
+}
+.login-select-arrow{
+  position:absolute!important;
+  right:2px!important;
+  width:auto!important;
+  color:#9da29d!important;
+  font-size:10px!important;
+  pointer-events:none;
+}
+.login-simple-wrap .eye{
+  position:absolute!important;
+  right:0!important;
+  top:50%!important;
+  transform:translateY(-50%)!important;
+  width:34px!important;
+  height:42px!important;
+  border:0!important;
+  background:transparent!important;
+  color:#9da29d!important;
+  padding:0!important;
+}
+.login-simple-wrap .login-btn{
+  width:100%!important;
+  height:52px!important;
+  margin-top:11px!important;
+  border:0!important;
+  border-radius:12px!important;
+  background:#2f6939!important;
+  color:#fff!important;
+  box-shadow:none!important;
+  font-family:"Inter",sans-serif!important;
+  font-size:14px!important;
+  font-weight:700!important;
+}
+.login-simple-wrap .login-btn:active{transform:scale(.99)}
+.login-simple-wrap .message{
+  margin-top:10px!important;
+  font-size:10px!important;
+}
+.login-bottom-copy{
+  margin-top:22px;
+  text-align:center;
+  font-size:10px;
+  color:#adb1ad;
+}
+
+.login-bg-icon{
+  position:absolute;
+  z-index:0;
+  color:#edf1ed;
+  pointer-events:none;
+  user-select:none;
+}
+.lbi1{font-size:76px;top:6%;left:-12px;transform:rotate(-15deg)}
+.lbi2{font-size:58px;top:10%;right:8%;transform:rotate(15deg)}
+.lbi3{font-size:72px;top:29%;right:-20px;transform:rotate(-12deg)}
+.lbi4{font-size:54px;top:34%;left:5%;transform:rotate(12deg)}
+.lbi5{font-size:70px;bottom:24%;left:-10px;transform:rotate(-10deg)}
+.lbi6{font-size:55px;bottom:20%;right:7%;transform:rotate(12deg)}
+.lbi7{font-size:72px;bottom:3%;right:-7px;transform:rotate(-17deg)}
+.lbi8{font-size:52px;bottom:8%;left:14%;transform:rotate(15deg)}
+
+@media(min-width:768px){
+  .login-simple-wrap{max-width:400px}
+  .login-poultry{font-size:34px}
+  .login-farmer{font-size:44px}
+  .lbi1{left:8%}
+  .lbi3{right:8%}
+  .lbi5{left:9%}
+  .lbi7{right:10%}
+}
+@media(max-width:850px){
+  .login-page{
+    min-height:100dvh!important;
+    height:100dvh!important;
+    display:flex!important;
+    padding:
+      calc(22px + env(safe-area-inset-top))
+      22px
+      calc(22px + env(safe-area-inset-bottom))!important;
+  }
+}
+
 </style>
 </head>
 
@@ -646,57 +845,66 @@ body{
 
 <!-- LOGIN VIEW -->
 <div class="login-page hidden" id="loginView">
-  <div class="login-card">
 
-    <div class="top-visual">
-      <div class="hen-watermark"><i class="fa-solid fa-kiwi-bird"></i></div>
-      <div class="visual-icon">
-        <i class="fa-solid fa-kiwi-bird"></i>
-      </div>
-      <div class="visual-dots">
-        <span></span><span></span><span></span><span></span>
-      </div>
+  <!-- light poultry/farm background icons -->
+  <i class="fa-solid fa-feather-pointed login-bg-icon lbi1"></i>
+  <i class="fa-solid fa-egg login-bg-icon lbi2"></i>
+  <i class="fa-solid fa-wheat-awn login-bg-icon lbi3"></i>
+  <i class="fa-solid fa-house login-bg-icon lbi4"></i>
+  <i class="fa-solid fa-tractor login-bg-icon lbi5"></i>
+  <i class="fa-solid fa-temperature-half login-bg-icon lbi6"></i>
+  <i class="fa-solid fa-seedling login-bg-icon lbi7"></i>
+  <i class="fa-solid fa-droplet login-bg-icon lbi8"></i>
+
+  <div class="login-simple-wrap">
+
+    <div class="login-brand-title">
+      <span class="login-poultry">Poultry</span>
+      <span class="login-farmer">Farmer</span>
     </div>
 
-    <div class="login-content">
-      <div class="login-title">Login</div>
+    <p class="login-subtitle">Login to your farm account</p>
 
-      <form id="loginForm" autocomplete="off">
-        <div class="field">
-          <label>Login ID</label>
-          <div class="input">
-            <i class="fa-regular fa-user"></i>
-            <input id="loginId" type="text" placeholder="Enter Login ID"
-              autocomplete="username" autocapitalize="none" spellcheck="false" required>
-          </div>
+    <form id="loginForm" autocomplete="off">
+
+      <div class="field">
+        <label>Login ID</label>
+        <div class="input login-line-input">
+          <i class="fa-regular fa-user"></i>
+          <input id="loginId" type="text" placeholder="Enter Login ID"
+            autocomplete="username" autocapitalize="none" spellcheck="false" required>
         </div>
+      </div>
 
-        <div class="field">
-          <label>Village</label>
-          <div class="input">
-            <i class="fa-solid fa-location-dot"></i>
-            <select id="villageSelect" required>
-              <option value="">Loading villages...</option>
-            </select>
-          </div>
+      <div class="field">
+        <label>Village</label>
+        <div class="input login-line-input">
+          <i class="fa-solid fa-location-dot"></i>
+          <select id="villageSelect" required>
+            <option value="">Loading villages...</option>
+          </select>
+          <i class="fa-solid fa-chevron-down login-select-arrow"></i>
         </div>
+      </div>
 
-        <div class="field">
-          <label>Password</label>
-          <div class="input">
-            <i class="fa-solid fa-lock"></i>
-            <input id="password" type="password" placeholder="Enter password"
-              autocomplete="current-password" required>
-            <button class="eye" id="eyeBtn" type="button" aria-label="Show password">
-              <i class="fa-regular fa-eye"></i>
-            </button>
-          </div>
+      <div class="field">
+        <label>Password</label>
+        <div class="input login-line-input">
+          <i class="fa-solid fa-lock"></i>
+          <input id="password" type="password" placeholder="Enter password"
+            autocomplete="current-password" required>
+          <button class="eye" id="eyeBtn" type="button" aria-label="Show password">
+            <i class="fa-regular fa-eye"></i>
+          </button>
         </div>
+      </div>
 
-        <button class="login-btn" id="loginBtn" type="submit"><span>Login</span></button>
-        <div class="message" id="message"></div>
-      </form>
-    </div>
+      <button class="login-btn" id="loginBtn" type="submit"><span>Login</span></button>
+      <div class="message" id="message"></div>
+    </form>
+
+    <div class="login-bottom-copy">Poultry Farm Management</div>
+
   </div>
 </div>
 
@@ -743,7 +951,7 @@ body{
           <span>WORKING HOURS</span>
           <b id="workHoursText">Loading...</b>
         </div>
-
+        <strong id="workHoursStatus">Loading</strong>
       </div>
 
       <div class="quick-grid">
